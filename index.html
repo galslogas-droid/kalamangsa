@@ -16,45 +16,32 @@
         url("uthman-taha-naskh.otf") format("opentype");
     font-display:swap;
   }
+  /* Palet "Modern Islamic Javanese Heritage" — dikontrol app dhewe (data-theme),
+     ora manut prefers-color-scheme sistem, supaya konsisten kaya sing dikarepke. */
   :root{
-    --bg:#F6F2E7;
-    --surface:#FFFEFB;
-    --surface2:#F1E9D6;
-    --ink:#20304A;
-    --muted:#6B6355;
-    --rule:#E3D9C0;
-    --gold:#9C7A1E;
-    --gold-soft:#F3E6BE;
-    --navy:#20304A;
-    --warn:#B4552B;
-    --warn-soft:#F5E4DA;
-    --good:#3F7D5C;
-    --good-soft:#E1EEE3;
-    --shadow:0 2px 10px rgba(80,60,20,0.08);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#0F1319;
-      --surface:#1B222B;
-      --surface2:#242D38;
-      --ink:#F1EDE1;
-      --muted:#9BA5B4;
-      --rule:#323C48;
-      --gold:#E8C36B;
-      --gold-soft:#3A2F13;
-      --navy:#D8CFAE;
-      --warn:#E8955F;
-      --warn-soft:#3A2216;
-      --good:#8FCC9E;
-      --good-soft:#1B2E22;
-      --shadow:0 2px 14px rgba(0,0,0,0.35);
-    }
+    --bg:#F5F1E7;
+    --surface:#FFFDF8;
+    --surface2:#EFE6D2;
+    --ink:#3A3026;
+    --muted:#7A6E5C;
+    --rule:#E4D9C0;
+    --gold:#B8944B;
+    --gold-soft:#F0E4C6;
+    --navy:#173F35;
+    --accent:#173F35;
+    --accent-soft:#E1EAE5;
+    --warn:#A85D3B;
+    --warn-soft:#F1E1D6;
+    --good:#173F35;
+    --good-soft:#E1EAE5;
+    --shadow:0 3px 12px rgba(58,48,38,0.10);
   }
   :root[data-theme="dark"]{
-    --bg:#0F1319; --surface:#1B222B; --surface2:#242D38; --ink:#F1EDE1; --muted:#9BA5B4;
-    --rule:#323C48; --gold:#E8C36B; --gold-soft:#3A2F13; --navy:#D8CFAE;
-    --warn:#E8955F; --warn-soft:#3A2216; --good:#8FCC9E; --good-soft:#1B2E22;
-    --shadow:0 2px 14px rgba(0,0,0,0.35);
+    --bg:#0C1714; --surface:#14231F; --surface2:#1B2C26; --ink:#EEE7D8; --muted:#9CB0A5;
+    --rule:#25382F; --gold:#D4B46A; --gold-soft:#3A2F13; --navy:#EEE7D8;
+    --accent:#285C4D; --accent-soft:#16281F;
+    --warn:#D08A63; --warn-soft:#3A2216; --good:#6FAE95; --good-soft:#16281F;
+    --shadow:0 3px 16px rgba(0,0,0,0.4);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -69,22 +56,49 @@
   #app{max-width:480px;width:100%;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
   header{
     display:flex;align-items:center;justify-content:space-between;
-    padding:1rem 1.1rem 0.8rem;
+    padding:1.1rem 1.1rem 0.6rem;
   }
-  .brand{display:flex;align-items:center;gap:0.6rem;}
+  .brand{display:flex;align-items:center;gap:0.65rem;}
   .brand .mark{
-    width:2.1rem;height:2.1rem;border-radius:9px;display:block;object-fit:contain;
+    width:2.4rem;height:2.4rem;border-radius:50%;display:block;object-fit:cover;
+    border:1.5px solid var(--gold);box-shadow:var(--shadow);
   }
-  .brand h1{font-size:1.15rem;margin:0;font-family:Georgia,"Palatino Linotype",serif;}
-  .brand .tagline{font-size:0.68rem;color:var(--muted);margin-top:0.1rem;}
+  .brand h1{
+    font-size:1.05rem;margin:0;font-family:Georgia,"Palatino Linotype",serif;
+    letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);
+  }
+  .brand .tagline{font-size:0.66rem;color:var(--muted);margin-top:0.15rem;}
   #themeToggle{
     border:1px solid var(--rule);background:var(--surface);color:var(--ink);
-    border-radius:999px;padding:0.35rem 0.7rem;font-size:0.72rem;cursor:pointer;
+    border-radius:999px;padding:0.35rem 0.75rem;font-size:0.72rem;cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .ornament{
+    text-align:center;color:var(--gold);letter-spacing:0.5em;font-size:0.7rem;
+    opacity:0.65;margin:0 0 0.9rem;padding-left:0.5em;
   }
   main{flex:1;padding:0 1.1rem 1.5rem;}
 
-  /* home grid */
-  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.7rem;margin-top:0.3rem;}
+  /* hero (Weton, petungan utama) */
+  .hero{
+    background:linear-gradient(155deg,var(--accent) 0%,var(--accent) 100%);
+    color:#F5F1E7;border-radius:16px;padding:1.1rem 1.2rem;margin-bottom:1.4rem;
+    cursor:pointer;box-shadow:var(--shadow);border:1px solid var(--accent);
+    display:block;text-align:left;width:100%;font-family:inherit;
+  }
+  .hero .heroLabel{font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.75;display:flex;align-items:center;gap:0.4rem;}
+  .hero .heroLabel svg{width:1rem;height:1rem;stroke:#F5F1E7;}
+  .hero .heroBig{font-family:Georgia,serif;font-size:1.5rem;font-weight:700;margin:0.35rem 0 0.15rem;color:#F6E9C9;}
+  .hero .heroSub{font-size:0.8rem;opacity:0.85;}
+  .hero .heroDate{font-size:0.7rem;opacity:0.65;margin-top:0.5rem;}
+
+  /* kategori + grid */
+  .catHeader{
+    font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--gold);margin:1.3rem 0 0.6rem;display:flex;align-items:center;gap:0.4rem;
+  }
+  .catHeader:first-of-type{margin-top:0;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.7rem;}
   .card{
     background:var(--surface);border:1px solid var(--rule);border-radius:12px;
     padding:0.85rem 0.8rem;text-align:left;cursor:pointer;min-width:0;
@@ -96,13 +110,14 @@
   .card .badge{
     width:2.3rem;height:2.3rem;border-radius:9px;background:var(--gold-soft);color:var(--gold);
     display:flex;align-items:center;justify-content:center;font-weight:700;
-    font-family:"Uthman Taha Naskh",Georgia,serif;font-size:1.15rem;
+    font-family:"Uthman Taha Naskh",Georgia,serif;font-size:1.2rem;
   }
+  .card .badge svg{width:1.25rem;height:1.25rem;stroke:var(--gold);}
   .card .title{font-weight:600;font-size:0.86rem;}
   .card .desc{font-size:0.72rem;color:var(--muted);}
   .card .flag{
-    align-self:flex-start;font-size:0.62rem;font-weight:700;letter-spacing:0.03em;
-    color:var(--warn);background:var(--warn-soft);padding:0.1rem 0.4rem;border-radius:999px;
+    align-self:flex-start;font-size:0.6rem;font-weight:700;letter-spacing:0.03em;
+    color:var(--gold);background:var(--gold-soft);padding:0.1rem 0.45rem;border-radius:999px;
   }
 
   /* screens */
@@ -130,15 +145,20 @@
   .result .row .v{font-weight:600;text-align:right;}
   .result .big{font-family:Georgia,serif;font-size:1.3rem;font-weight:700;margin-bottom:0.3rem;}
   .result .sub{font-size:0.82rem;color:var(--muted);margin-bottom:0.6rem;}
-  .result .note{font-size:0.78rem;color:var(--ink);background:var(--surface2);border-radius:8px;padding:0.6rem 0.7rem;margin-top:0.7rem;}
+  .result .note{
+    font-size:0.78rem;color:var(--ink);background:var(--surface2);border-radius:0 8px 8px 0;
+    padding:0.6rem 0.8rem;margin-top:0.7rem;border-left:3px solid var(--gold);
+  }
 
   .usulan{
-    display:inline-flex;align-items:center;gap:0.3rem;font-size:0.68rem;font-weight:700;
-    color:var(--warn);background:var(--warn-soft);padding:0.15rem 0.5rem;border-radius:999px;margin-bottom:0.6rem;
+    display:inline-flex;align-items:center;gap:0.3rem;font-size:0.66rem;font-weight:700;
+    letter-spacing:0.03em;color:var(--gold);background:var(--gold-soft);
+    padding:0.15rem 0.55rem;border-radius:999px;margin-bottom:0.6rem;
   }
   .goodtag{
-    display:inline-flex;align-items:center;gap:0.3rem;font-size:0.68rem;font-weight:700;
-    color:var(--good);background:var(--good-soft);padding:0.15rem 0.5rem;border-radius:999px;margin-bottom:0.6rem;
+    display:inline-flex;align-items:center;gap:0.3rem;font-size:0.66rem;font-weight:700;
+    letter-spacing:0.03em;color:var(--good);background:var(--good-soft);
+    padding:0.15rem 0.55rem;border-radius:999px;margin-bottom:0.6rem;
   }
 
   .arab{font-family:"Uthman Taha Naskh","Traditional Arabic",serif;}
@@ -177,16 +197,18 @@
       <img class="mark" src="icon-192.png" alt="Kalamangsa" width="34" height="34">
       <div>
         <h1>Kalamangsa</h1>
-        <div class="tagline">petungan Jawa &middot; Islam</div>
+        <div class="tagline">Petungan Jawa &middot; Falak &middot; Tradisi Islam</div>
       </div>
     </div>
     <button id="themeToggle" type="button">☀️ Rina</button>
   </header>
+  <div class="ornament">─── ✦ ───</div>
 
   <main>
     <section class="screen active" id="screen-home">
-      <p class="screenDesc">Pilih petungan sing dikarepke. Tandha <span class="usulan">USULAN</span> tegese rumus during ditashih Gus Fi — dianggo kanthi ngati-ati.</p>
-      <div class="grid" id="homeGrid"></div>
+      <p class="screenDesc">Pilih petungan sing dikarepke. Tandha <span class="usulan">◈ BELUM DITASHIH</span> tegese rumus during ditashih Gus Fi — dianggo kanthi ngati-ati.</p>
+      <div id="heroWeton"></div>
+      <div id="homeCategories"></div>
     </section>
 
     <!-- screen liyane digawe otomatis liwat JS saka konfigurasi SCREENS -->
@@ -231,7 +253,7 @@
       </div>
       <p class="screenDesc">Jam planet miturut warisan ilmu falak-nujum klasik (Abu Ma'syar). Mbutuhake lokasi kanggo ngitung terbit/surup srengenge sing tepat.</p>
       <div class="usulan">WARISAN KLASIK, DUDU ILMU FALAK FIQH-BAKU</div>
-      <div class="note" style="margin-bottom:1rem;">Kene mung nampilake itungan jam lan jeneng planet sing "mangku" miturut tradisi, TANPA label apik/ala. Iki dudu kewajiban agama — miturut sumber tradisi dhewe, cukup diwiwiti Basmalah wae kanthi wektu apa wae.</div>
+      <div class="note" style="margin-bottom:1rem;">Kene nampilake itungan jam, jeneng planet sing "mangku", lan label apik/ala/netral miturut tradisi benefik-malefik klasik. Iki dudu kewajiban agama — miturut sumber tradisi dhewe, cukup diwiwiti Basmalah wae kanthi wektu apa wae.</div>
       <div id="kawakibNoLoc">
         <button type="button" id="kawakibAsk" class="kbActions" style="display:flex;width:100%;padding:0.7rem;border-radius:9px;border:1px solid var(--rule);background:var(--gold-soft);color:var(--gold);font-weight:700;cursor:pointer;justify-content:center;">Njaluk Lokasi</button>
       </div>
@@ -261,7 +283,7 @@
     </section>
   </main>
 
-  <footer>Kalamangsa &middot; petungan primbon Jawa-Islam &middot; kabeh rumus dikutip saka referensi umum, bagean sing ditandhani USULAN during pasti lan mbutuhake tashih.</footer>
+  <footer>Kalamangsa &middot; petungan primbon Jawa-Islam &middot; kabeh rumus dikutip saka referensi umum, bagean sing ditandhani ◈ BELUM DITASHIH during pasti lan mbutuhake tashih.</footer>
 </div>
 
 <script src="calc.js"></script>
@@ -271,7 +293,7 @@
 // ============ konfigurasi layar sing pola-e padha (siji tanggal input) ============
 const SCREENS = [
   {
-    id: "weton", badge: "W", icon: "📅", title: "Weton &amp; Kalender",
+    id: "weton", badge: "W", icon: "📅", category: "hero", title: "Weton &amp; Kalender",
     desc: "Petung dina, pasaran, neptu, lan tanggal Hijriyah.",
     home: "Weton, neptu, konversi tanggal Masehi-Hijriyah.",
     render(date) {
@@ -288,7 +310,7 @@ const SCREENS = [
         <div class="row"><span class="k">Wuku</span><span class="v">${wk.nama} (ka-${wk.urutan}/30)</span></div>
         <div class="row"><span class="k">Kalender Hijriyah</span><span class="v">${h.tanggal} ${h.bulan} ${h.tahun} H</span></div>
         <div class="note">Kalender Hijriyah kene sacara aritmetik (tabular), bisa selisih ±1 dina karo pengumuman rukyatul hilal resmi.</div>
-        <div class="usulan">USULAN &mdash; Wuku during ditashih</div>
+        <div class="usulan">◈ BELUM DITASHIH &mdash; Wuku during ditashih</div>
         <div class="note">Urutan wuku dicek riset web, dikalibrasi tanggal 16 Agustus 2026 = Medangkungan (sumber ki-demang.com). Watak/dewa saben wuku during dilebokake — during ketemu rujukan sing genah.</div>
         <div class="note"><b>Tabel Neptu</b> (padha karo app asli):<br>
         Ahad(5) &middot; Senin(4) &middot; Selasa(3) &middot; Rebo(7) &middot; Kemis(8) &middot; Jemuwah(6) &middot; Setu(9)<br>
@@ -296,7 +318,7 @@ const SCREENS = [
     },
   },
   {
-    id: "usaha", badge: "U", icon: "🏪", title: "Buka Usaha",
+    id: "usaha", badge: "U", icon: "🏪", category: "laku", title: "Buka Usaha",
     desc: "Petung dina apik miwiti usaha.",
     home: "Petung dina kanggo miwiti usaha/dagang.",
     render(date) {
@@ -310,7 +332,7 @@ const SCREENS = [
     },
   },
   {
-    id: "rumah", badge: "R", icon: "🏠", title: "Griya/Omah",
+    id: "rumah", badge: "R", icon: "🏠", category: "laku", title: "Griya/Omah",
     desc: "Petung dina apik mbangun utawa pindhah omah.",
     home: "Petung dina kanggo mbangun/pindhah griya.",
     render(date) {
@@ -324,7 +346,7 @@ const SCREENS = [
     },
   },
   {
-    id: "minggat", badge: "M", icon: "🧳", title: "Lelungan/Minggat",
+    id: "minggat", badge: "M", icon: "🧳", category: "laku", title: "Lelungan/Minggat",
     desc: "Petung dina apik kanggo lelungan utawa pindhah panggonan.",
     home: "Petung dina kanggo lelungan/pindhah panggonan.",
     render(date) {
@@ -338,7 +360,7 @@ const SCREENS = [
     },
   },
   {
-    id: "mangsa", badge: "P", icon: "🌾", title: "Pranata Mangsa",
+    id: "mangsa", badge: "P", icon: "🌾", category: "langit", title: "Pranata Mangsa",
     desc: "Kalender musim tani Jawa kuna, adhedhasar posisi srengenge.",
     home: "Kalender musim/tani Jawa (12 mangsa).",
     render(date) {
@@ -355,7 +377,7 @@ const SCREENS = [
     },
   },
   {
-    id: "zodiak", badge: "Z", icon: "♈", title: "Zodiak &amp; Tabiat Abu Ma'syar",
+    id: "zodiak", badge: "Z", icon: "♈", category: "langit", title: "Zodiak &amp; Tabiat Abu Ma'syar",
     desc: "Buruj miturut tradisi astrologi Arab-Islam klasik. App asli nduweni 2 mode: Mode 1 (Pendekatan) miturut tanggal lair, Mode 2 (Sesuai Kitab) miturut jeneng anak+ibu.",
     home: "12 Buruj (Haml—Huut) miturut Abu Ma'syar — 2 mode itungan.",
     render(date) {
@@ -373,14 +395,14 @@ const SCREENS = [
     },
   },
   {
-    id: "manzilah", badge: "B", icon: "🌙", title: "Manzilah",
+    id: "manzilah", badge: "B", icon: "🌙", category: "langit", title: "Manzilah",
     desc: "28 manzilah rembulan (manazil al-qamar).",
     home: "28 rumah rembulan — miturut posisi bujur ekliptika.",
     flagged: true,
     render(date) {
       const mz = manzilahOf(date);
       return `
-        <div class="usulan">USULAN &mdash; during ditashih</div>
+        <div class="usulan">◈ BELUM DITASHIH</div>
         <div class="big">${mz.nama} <span class="arab" style="font-size:1.2rem;color:var(--muted)">${mz.arab}</span></div>
         <div class="sub">Manzil ka-${mz.urutan}/28 &middot; ${mz.arti}</div>
         <div class="row"><span class="k">Bujur ekliptika rembulan</span><span class="v">${mz.derajat.toFixed(1)}&deg;</span></div>
@@ -389,23 +411,89 @@ const SCREENS = [
   },
 ];
 
-// ============ bangun home grid + screen otomatis ============
-const homeGrid = document.getElementById("homeGrid");
+// ============ ikon garis (SVG), siji gaya konsisten, ganti emoji ============
+const ICONS = {
+  weton: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="7" y1="3" x2="7" y2="7"/><line x1="17" y1="3" x2="17" y2="7"/></svg>',
+  jodoh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>',
+  cocok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-6.8-4.1-9-8.1C1.4 9 2.8 5.7 6.1 5.7c1.9 0 3.4 1.1 5.9 3.8 2.5-2.7 4-3.8 5.9-3.8 3.3 0 4.7 3.3 3.1 6.7-2.2 4-9 8.1-9 8.1z"/></svg>',
+  manten: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V10a7 7 0 0 1 14 0v11"/><line x1="3" y1="21" x2="21" y2="21"/></svg>',
+  usaha: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-5h14l1 5"/><path d="M4 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M5 9.5V20h14V9.5"/><rect x="10" y="14" width="4" height="6"/></svg>',
+  rumah: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><line x1="10" y1="20" x2="10" y2="14"/><line x1="14" y1="20" x2="14" y2="14"/></svg>',
+  minggat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.3 8.7l-2.1 5.9-5.9 2.1 2.1-5.9z"/></svg>',
+  mangsa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><line x1="12" y1="2.5" x2="12" y2="5.2"/><line x1="12" y1="18.8" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5.2" y2="12"/><line x1="18.8" y1="12" x2="21.5" y2="12"/><line x1="5" y1="5" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="19" y2="19"/><line x1="19" y1="5" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5" y2="19"/></svg>',
+  manzilah: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3.5a9 9 0 1 0 0 17 7.2 7.2 0 0 1 0-17z"/></svg>',
+  kawakib: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-20 12 12)"/></svg>',
+  zodiak: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5l1.9 6.5 6.6 1.9-6.6 1.9-1.9 6.6-1.9-6.6-6.6-1.9 6.6-1.9z"/></svg>',
+};
+
+// Kertu-kertu sing dudu "siji tanggal input" (duwe pola dhewe), dikumpulke
+// ing kene supaya bisa melu dibagi kategori/bab bareng SCREENS.
+const EXTRA_CARDS = [
+  { id: "jodoh", title: "Jodoh Weton", home: "Kecocokan saka neptu weton loro wong.", category: "jodoh" },
+  { id: "cocok", title: "Cocok Serasi", home: "Kecocokan saka jeneng aksara Arab.", category: "jodoh" },
+  { id: "manten", title: "Temu Manten", home: "Petung tanggal nikah + tanggal alternatif.", category: "jodoh" },
+  { id: "kawakib", title: "Sa'at Kawakib", home: "Jam planet — warisan falak-nujum klasik.", category: "langit" },
+  { id: "tabiat", title: "Abjad &amp; Tabiat", home: "Nilai abjad tembung/ayat (aksara Arab).", category: "abjad" },
+];
+
+const CATEGORIES = [
+  { key: "jodoh", bab: "02", title: "Jodoh & Perjodohan" },
+  { key: "laku", bab: "03", title: "Laku & Panggonan" },
+  { key: "langit", bab: "04", title: "Mangsa & Langit" },
+  { key: "abjad", bab: "05", title: "Abjad & Hisab" },
+];
+
+// ============ hero Weton (Bab 01, petungan utama) ============
+function renderHero() {
+  const w = wetonOf(new Date());
+  const tglSaiki = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  document.getElementById("heroWeton").innerHTML = `
+    <button type="button" class="hero" id="heroBtn">
+      <div class="heroLabel">${ICONS.weton} Bab 01 &middot; Petungan Utama</div>
+      <div class="heroBig">${w.hari} ${w.pasaran}</div>
+      <div class="heroSub">Neptu ${w.neptu} &middot; weton dina iki</div>
+      <div class="heroDate">${tglSaiki} &middot; ketuk kanggo weruh jangkepe &rarr;</div>
+    </button>`;
+  document.getElementById("heroBtn").addEventListener("click", () => goTo("weton"));
+}
+renderHero();
+
+// ============ bangun kertu home (dibagi bab/kategori) + screen otomatis ============
 const main = document.querySelector("main");
+const cardMetaById = {};
+SCREENS.forEach((s) => { cardMetaById[s.id] = s; });
+EXTRA_CARDS.forEach((s) => { cardMetaById[s.id] = s; });
+
+function buildHomeCategories() {
+  const container = document.getElementById("homeCategories");
+  CATEGORIES.forEach((cat) => {
+    const items = Object.values(cardMetaById).filter((s) => s.category === cat.key);
+    if (!items.length) return;
+    const header = document.createElement("div");
+    header.className = "catHeader";
+    header.textContent = `Bab ${cat.bab} · ${cat.title}`;
+    container.appendChild(header);
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    items.forEach((s, i) => {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "card";
+      card.innerHTML = `
+        <div class="badge">${s.id === "tabiat" ? "ا" : (ICONS[s.id] || "")}</div>
+        <div class="title">${s.title}</div>
+        <div class="desc">${s.home}</div>
+        ${s.flagged ? '<div class="flag">◈ Belum ditashih</div>' : ""}`;
+      card.addEventListener("click", () => goTo(s.id));
+      if (items.length % 2 === 1 && i === items.length - 1) card.style.gridColumn = "1 / -1";
+      grid.appendChild(card);
+    });
+    container.appendChild(grid);
+  });
+}
+buildHomeCategories();
 
 SCREENS.forEach((s) => {
-  // kertu ing home
-  const card = document.createElement("button");
-  card.type = "button";
-  card.className = "card";
-  card.innerHTML = `
-    <div class="badge">${s.icon || s.badge}</div>
-    <div class="title">${s.title}</div>
-    <div class="desc">${s.home}</div>
-    ${s.flagged ? '<div class="flag">USULAN</div>' : ""}`;
-  card.addEventListener("click", () => goTo(s.id));
-  homeGrid.appendChild(card);
-
   // screen (siji tanggal input)
   const section = document.createElement("section");
   section.className = "screen";
@@ -434,21 +522,6 @@ SCREENS.forEach((s) => {
   input.addEventListener("change", update);
   update();
 });
-
-// kertu Jodoh & Tabiat (pola dhewe) ditambahke manual ing ndhuwur homeGrid
-function prependCard(id, icon, title, desc) {
-  const card = document.createElement("button");
-  card.type = "button";
-  card.className = "card";
-  card.innerHTML = `<div class="badge">${icon}</div><div class="title">${title}</div><div class="desc">${desc}</div>`;
-  card.addEventListener("click", () => goTo(id));
-  homeGrid.insertBefore(card, homeGrid.firstChild);
-}
-prependCard("manten", "💒", "Temu Manten", "Petung tanggal nikah + tanggal alternatif.");
-prependCard("cocok", "💍", "Cocok Serasi", "Kecocokan saka jeneng aksara Arab.");
-prependCard("kawakib", "🪐", "Sa'at Kawakib", "Jam planet — warisan falak-nujum klasik.");
-prependCard("tabiat", "ا", "Abjad &amp; Tabiat", "Nilai abjad tembung/ayat (aksara Arab).");
-prependCard("jodoh", "💞", "Jodoh Weton", "Kecocokan saka neptu weton loro wong.");
 
 // ============ navigasi (kanthi hash, dadi bisa deep-link lan tombol back browser) ============
 function goTo(id, pushHash) {
@@ -726,24 +799,21 @@ document.getElementById("kawakibAsk").addEventListener("click", () => {
   } catch (e) {}
 })();
 
-// ============ tema (rina/wengi) ============
+// ============ tema (rina/wengi) — dikontrol app dhewe, ora manut sistem ============
 const themeToggle = document.getElementById("themeToggle");
 function effectiveTheme() {
-  const explicit = document.documentElement.getAttribute("data-theme");
-  if (explicit) return explicit;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return document.documentElement.getAttribute("data-theme") || "light";
 }
 function updateThemeLabel() {
   themeToggle.textContent = effectiveTheme() === "dark" ? "🌙 Wengi" : "☀️ Rina";
 }
 function applyTheme(t) {
-  if (t) document.documentElement.setAttribute("data-theme", t);
-  else document.documentElement.removeAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme", t);
   updateThemeLabel();
 }
 let savedTheme = null;
 try { savedTheme = localStorage.getItem("kalamangsa-theme"); } catch (e) {}
-applyTheme(savedTheme);
+applyTheme(savedTheme || "light");
 themeToggle.addEventListener("click", () => {
   const next = effectiveTheme() === "dark" ? "light" : "dark";
   applyTheme(next);
