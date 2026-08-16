@@ -59,8 +59,296 @@ function wukuOf(date) {
   const diffDays = Math.floor((toUTCms(date) - WUKU_ANCHOR_UTC) / 86400000);
   const weekIdx = Math.floor(diffDays / 7);
   const idx = (((WUKU_ANCHOR_INDEX + weekIdx) % 30) + 30) % 30;
-  return { nama: WUKU[idx], urutan: idx + 1 };
+  return { nama: WUKU[idx], urutan: idx + 1, ...WUKU_DETAIL[idx] };
 }
+
+// Dewa/watak/lambang/pantangan saben wuku [USULAN — during ditashih Gus Fi,
+// PERLU EKSTRA ngati-ati amarga wis liwat 2 lapis pangolahan: (1) situs asline
+// (ki-demang.com/almanak_jawa, basa Indonesia, 30 tanggal beda diakses siji
+// per wuku, riset 16 Agustus 2026) → (2) diringkes dening AI liyane (agent
+// riset) dadi basa Indonesia → (3) DITERJEMAHAKE DEWEK dening Dul menyang
+// basa Jawa ngoko ing ngisor iki, ben jinis basane padha karo keterangan
+// liyane sak app (BURUJ, PRANATA_MANGSA). Tegese iki DUDU kutipan langsung
+// tanpa owahan — isih rawan luntur tliti nalika ditejemahake, senajan isine
+// wis diusahakke padha. Tashih Gus Fi kudu mriksa isi TENAN (bandhingake
+// karo situs asline yen perlu), dudu mung mriksa basa Jawane wae.
+// Katrangan sing during lengkap ing sumber asline (lambang during ana jeneng
+// pohon/burung tekstual) dijarno kosong, dudu ditebak. "-" tegese ora ana
+// katrangan arah pantangan ing sumber. Siji katrangan penting: nama wuku #7
+// ing sumber ki-demang tetep "Warigalit" — cocog persis karo array WUKU ing
+// ndhuwur (dudu bola-bali "Wariga"), dadi ora ana konflik jeneng.
+const WUKU_DETAIL = [
+  { // 0 Sinta
+    dewa: "Bethara Yamadipati",
+    lambang: "Pohon Gendhayakan (mayungi wong lara); Manuk Gagak (nampa pituduh ilahi)",
+    watak: "Seneng mamerake kasugihane; kurang sabar; nanging luhur budine.",
+    baik: "Nambani/nyuwun srana, nyuwun udan, prekara sing sesambungan karo alam ghaib",
+    tidakBaik: "Tanem tuwuh, mbukak pekarangan",
+    arah: "Wetan Laut (Timur Laut)",
+    catatan: "Kurang loman nalika kacukupan bisa nekakake kacilakan.",
+  },
+  { // 1 Landep
+    dewa: "Bethara Maha Dewa",
+    lambang: "",
+    watak: "Madhangi atine wong akeh; seneng mamerake kasugihan; dhawuhe alus ing njaba nanging keras ing njero.",
+    baik: "Ngasah pedhang, gawe pager, gawe wisaya iwak (kolam)",
+    tidakBaik: "Pindhah omah, hajat mantenan, miwiti usaha, gawe lawang",
+    arah: "-",
+    catatan: "Sasuwene 7 dina aja marani Kala.",
+  },
+  { // 2 Wukir
+    dewa: "Bethara Mahayekti",
+    lambang: "Gunung (endah dideleng seka adoh, mbebayani yen didekati); Pohon Nagasari (watak pandhita); Manuk Manyar (seneng saingan); kewan alas (pengaruh alon-alon)",
+    watak: "Ora ketara isi atine, seneng mrentah; wawasane jembar, dadi sumber ilmu kanggo wong liya.",
+    baik: "Mantu, mbenerake apa wae, kekancan kanthi tulus",
+    tidakBaik: "Tirakat/tetirah, nambani lara, masang tumbal, ngedegake omah",
+    arah: "Kidul Wetan (Tenggara)",
+    catatan: "Papan sial ing tenggara, madhep menyang barat laut.",
+  },
+  { // 3 Kurantil
+    dewa: "Bethara Langsur",
+    lambang: "",
+    watak: "Tansah kesusu nanging atine sabar; ora seneng nganggur; boros, ora bisa nyimpen bandha; seneng selingkuh; bisa urip mulya.",
+    baik: "Golek jodho",
+    tidakBaik: "Mantu, nglumpukake wong, tanem tuwuh; pertemanan kerep tukaran",
+    arah: "-",
+    catatan: "Ngedohi kegiyatan menyang ngisor sasuwene wuku iki.",
+  },
+  { // 4 Tolu
+    dewa: "Bethara Bayu (Dewa Angin)",
+    lambang: "Manuk Branjangan — seneng gawe perkara",
+    watak: "Gumedhe lan angel dilayani karepe; seneng mamerake kasugihan; begja teka mburi, dudu ing wiwitan.",
+    baik: "Golek pangupa jiwa, nambani wong lara, tanem/pindhah panggonan, mantu",
+    tidakBaik: "Cidra, main judi, ngunduh woh saka wit sing dhuwur",
+    arah: "Kulon Laut (Barat Laut)",
+    catatan: "",
+  },
+  { // 5 Gumbreg
+    dewa: "Bethara Cakra",
+    lambang: "Pohon Beringin — dadi papan pangayoman",
+    watak: "Duwe wibawa lan pengaruh, dhawuhe dituruti anak buah; alus ing ngarep, keras/kenceng ing mburi; lambang kuwasa lan wewenang donya.",
+    baik: "Rembugan babagan besanan, golek pangupa jiwa (nemu begja)",
+    tidakBaik: "Tanem kebon, ngedegake omah, miwiti pakaryan apa wae, lelungan",
+    arah: "Kidul (Selatan)",
+    catatan: "Kala Jaya Bumi ana ing kidul.",
+  },
+  { // 6 Warigalit
+    dewa: "Bethara Asmara",
+    lambang: "(ana gambar manuk, jeneng manuke during kacathet cetha ing sumber)",
+    watak: "Wataké gampang nesu; tansah kurang sandhang-pangane.",
+    baik: "Kenalan lan sedulur-seduluran, ngajeni leluhur, ngedalake banyu, lelungan sowan sanak sedulur",
+    tidakBaik: "Cidra, lelungan adoh, perang",
+    arah: "-",
+    catatan: "Becike ngedohi kegiyatan manjat.",
+  },
+  { // 7 Warigagung
+    dewa: "Bethara Maharesi — akeh omong",
+    lambang: "Macan Kêtawan (macan totol) — mantep bandhane senajan batin ora tentrem; Pohon Cemara (gumedhe, seneng usil); Manuk Bethet (mandiri)",
+    watak: "Setengah irit anggone nyimpen; begjane teka mburi; setiti banget marang sandhang-pangane dhewe.",
+    baik: "Ngedegake omah, tetanen, besanan, ngangsu kawruh kabatinan",
+    tidakBaik: "Lelungan nyamar, pindhah panggonan, nyiksa raja kaya",
+    arah: "Lor (Utara)",
+    catatan: "Kala Jaya Bumi ana ing lor madhep kidul.",
+  },
+  { // 8 Julungwangi
+    dewa: "Bethara Sambo",
+    lambang: "Pohon Cempaka; Manuk Kutilang; kewan Banteng (lumpuh); wadhah banyu (pasu)",
+    watak: "Ikhlas, becik budine, ora seneng nyimpen bandha; disenengi wong sing duwe pangkat/gedhe.",
+    baik: "Laku/tirakat kanthi disiplin, nampa wewarah kabatinan, nggarap lahan, mulang ilmu sing bakal digugu",
+    tidakBaik: "Lelungan adoh, pindhah panggonan, duwe hajat, ngedegake apa wae, nambani lara, golek pangupa jiwa",
+    arah: "Wetan Laut (Timur Laut)",
+    catatan: "",
+  },
+  { // 9 Sungsang
+    dewa: "Bethara Gana",
+    lambang: "Geni/kobaran geni — madhangi lan makarya wibawa nanging gawe ora kepenak; Pohon Tangan; Manuk Nori",
+    watak: "Seneng makarya, ora seneng nganggur; boros nanging loman, rejeki teka saka adoh, atine bisa dursila lan srakah; \"peteng atine\" — wani, sanggup tumindak kejem; nggawa wibawa lan cahya nanging gawe wong liya ora tentrem.",
+    baik: "Golek pangupa jiwa, pindhah panggonan, kekancan/sedulur-seduluran, hajat mantenan, mbatik, tetanen",
+    tidakBaik: "Manjat, negor kayu alas/kebon, lelungan adoh, seneng-seneng, kumpulan gedhe, perang",
+    arah: "Wetan (Timur)",
+    catatan: "Kala Jaya Bumi ana ing wetan madhep kulon.",
+  },
+  { // 10 Galungan
+    dewa: "Bethara Kamajaya",
+    lambang: "Lambang tresna lan setya",
+    watak: "Loman nanging boros; seneng padu.",
+    baik: "Tirakat, sowan sanak sedulur, ngangsu kawruh/pendhidhikan",
+    tidakBaik: "Tanem pring, lelungan adoh, nambani lara, hajat mantenan, ngedegake omah, ngoyak drajat/pangkat",
+    arah: "-",
+    catatan: "",
+  },
+  { // 11 Kuningan
+    dewa: "Bethara Indra",
+    lambang: "",
+    watak: "Padhang atine, slamet (prekara donya lan begja).",
+    baik: "Sedulur-seduluran, golek pangupa jiwa, nulungi wong",
+    tidakBaik: "Tanem tuwuh, mbenakake omah, mantu",
+    arah: "Kulon (Barat)",
+    catatan: "Kala Jaya Bumi ana ing kulon madhep wetan; aja tanem wit sing dijupuk kayune.",
+  },
+  { // 12 Langkir
+    dewa: "Bethara Kala",
+    lambang: "Pohon Cemara Sol lan Ingas (energi panas, ora cocog kanggo pangayoman); Manuk Gemak (lambang wani nanging ngarah ala)",
+    watak: "Kurang becik wataké lan seneng gawe ala; atine kaku, gawe rekasa awake dhewe; cenderung nyolong lan gawe padu.",
+    baik: "Tanem tuwuh, lelungan, hajat mantenan, njamasi gaman, nambani lara",
+    tidakBaik: "Cidra, kepekso perkara, padu",
+    arah: "Kidul Wetan (Tenggara)",
+    catatan: "",
+  },
+  { // 13 Mandasiya
+    dewa: "Bethara Brama",
+    lambang: "Pohon Asem (papan pangayoman); Manuk Platuk Bawang (energine kuwat); wangunan lawang tertutup (lambang irit)",
+    watak: "Seneng ngayomi lan loman, senajan ngarep-arep diakoni; ngati-ati babagan bandha lan rada gumedhe; bisa menehi dhukungan wong liya.",
+    baik: "Paseduluran, nambani lara, hajat mantu lsp.",
+    tidakBaik: "Lelungan, golek pangupa jiwa, gawe sumur, mbukak pekarangan",
+    arah: "-",
+    catatan: "Kegiyatan sing ngarah ngisor (kaya gawe sumur) becike diedohi.",
+  },
+  { // 14 Julungpujut
+    dewa: "Bethara Guritno",
+    lambang: "Pohon Rembuyut; Manuk Emprit Tondhang; kewan Sapi Gumarang Tumurun (lambang bungah lan energi aktif)",
+    watak: "Wataké ora tau tenanan (sembrana); mangane akeh lan kebak vitalitas; lambang wit nandhakake penampilan apik lan digoleki wong; lambang manuk nandhakake panguripan mandiri lan komunikasi becik.",
+    baik: "Golek pangupa jiwa, ngingu raja kaya (kebo, sapi, jaran), tanem palakirna (woh-wohan)",
+    tidakBaik: "Ngrancang lunga golek srana/ikhtiar; gampang kena santet",
+    arah: "Kulon Laut (Barat Laut)",
+    catatan: "",
+  },
+  { // 15 Pahang
+    dewa: "Bethara Tantra",
+    lambang: "Pohon (mayungi wong lara); Manuk Cocak (pinter guneman, seneng ing kutha); lawang candi kebuka (ikhlas, loman)",
+    watak: "Omongane panas; kurang becik budi pekertine; gampang tersinggung.",
+    baik: "Nambani lara, tanem apa wae, mantenan",
+    tidakBaik: "Lelungan adoh, golek pangupa jiwa, ngrancang lan mbenakake apa wae",
+    arah: "-",
+    catatan: "",
+  },
+  { // 16 Kuruwelut
+    dewa: "Bethara Wisnu",
+    lambang: "Banyu bening ing pasu/jembangan — lambang ati kebak rasa slamet; kaya \"kapas garing\" (ringkih lan gerahen)",
+    watak: "Cekatan nanging nakal (seneng ngganggu wong); tansah prihatin.",
+    baik: "Ndeleng-ndeleng calon mantu, ngrancang gawe/mbenakake omah",
+    tidakBaik: "Lelungan, mbenakake apa wae, nambani lara, tanem jujutan (tanduran kaya jagung)",
+    arah: "-",
+    catatan: "Ngedohi manjat sasuwene 7 dina wuku iki.",
+  },
+  { // 17 Marakeh
+    dewa: "Bethara Surenggana",
+    lambang: "Pohon Trengguli — kembange kurang migunani nanging wohe endah",
+    watak: "Kuwat pangeling-elinge; dalan tumuju kasuksesan cepet; seneng nduduhake berkah Gusti; ora bisa diutus lelungan adoh, dadi pusat perhatian ing kumpulan.",
+    baik: "Tanem pari, masang tumbal, mbenakake omah, gawe pekarangan",
+    tidakBaik: "Kerja sambilan, kasmaran/pacaran, pindhah panggonan",
+    arah: "Lor (Utara)",
+    catatan: "",
+  },
+  { // 18 Tambir
+    dewa: "Bethara Siwah — \"kabecikan njaba mêngku pamrih ing njero\"",
+    lambang: "Pohon Upas (ora cocog kanggo pangayoman); Manuk Prenjak (cita-cita dhuwur)",
+    watak: "Seneng umuk; batine ora slamet; kerep dijahili wong; kerep ilang semangat.",
+    baik: "Golek pangupa jiwa, tanem wit woh-wohan (palakina), nancepake turus (patok tanduran), ngangsu kawruh kabatinan, perang",
+    tidakBaik: "(sumber ora nyebutake dhaftar 'ora becik' kanthi cetha, mung pituduh ngedohi arah ing ngisor)",
+    arah: "Kidul Kulon (Barat Daya)",
+    catatan: "",
+  },
+  { // 19 Medangkungan
+    dewa: "Bethara Basuki",
+    lambang: "Pohon Plasa; Manuk Pelung (seneng papan banyu)",
+    watak: "Rame lan akeh omong; sopan; nampa katetepane Gusti kanthi legawa.",
+    baik: "Mantenan, ngedegake omah, golek srana (ikhtiar tamba)",
+    tidakBaik: "Padu lan cidra",
+    arah: "Wetan (Timur)",
+    catatan: "Rawan \"disalahake ing wayah bengi\"; rawan sial amarga kahanan.",
+  },
+  { // 20 Maktal
+    dewa: "Bethara Sakri",
+    lambang: "Pohon Nagasari; Manuk Ayam Alas; wangunan kanthi umbul-umbul ing ndhuwure",
+    watak: "Akeh sing simpati; omongane mikat; pinter ngabdi; olehe bandha lan kaurmatan bebarengan; jembar atine.",
+    baik: "Hajat mantenan, ngundang sanak sedulur kanggo prekara penting, mbenakake, ngibadah",
+    tidakBaik: "Lelungan (mligine mengalor-ngetan), pindhah papan, ngutangi dhuwit",
+    arah: "Wetan Laut (Timur Laut)",
+    catatan: "",
+  },
+  { // 21 Wuye
+    dewa: "Bethara Kuwera",
+    lambang: "Pohon Tal; Manuk Gogik; keris; wangunan lawang kebuka; sikil ana ing banyu",
+    watak: "Gedhe pepenginane lan kaku atine; pangrasane landhep; loman; seneng menehi pangayoman wong liya; landhep pandelenge marang kabecikan; gampang tersinggung; pinter siasat.",
+    baik: "Nyekel manuk, tanem tuwuh, sedulur-seduluran, golek rejeki",
+    tidakBaik: "Lelungan adoh, ngapusi",
+    arah: "Kulon (Barat)",
+    catatan: "",
+  },
+  { // 22 Manahil
+    dewa: "Bethara Gatra",
+    lambang: "Pohon Tigaron (Telu Godhong, tandha kesèd); Manuk Sepahan (begja ing pangupa jiwa)",
+    watak: "Welas asih lan akeh simpatine; landhep pangrasa batine; adhem atine (tentrem); gampang meri; \"kena besi\" (kapengaruh unsur logam).",
+    baik: "Golek tamba/srana, gawe bendungan, mbukak kuburan, mungkasi padu",
+    tidakBaik: "Nyebar wiji, mantu, golek kerja sambilan",
+    arah: "Kidul Wetan (Tenggara)",
+    catatan: "",
+  },
+  { // 23 Prangbakat
+    dewa: "Bethara Bisma",
+    lambang: "",
+    watak: "Dawa umure lan kajamin pangupa jiwane, nanging gumedhe; cekatan; sikil ngarep ing banyu — dhemenane alus ing ngarep panas ing mburi; kaku atine; seneng manjat.",
+    baik: "Golek pangupa jiwa sambilan, ngrumat pangan simpenan, dadi lantaran dagang, njatuhake paukuman",
+    tidakBaik: "Lelungan, tanem kebon, golek pakaryan, nambani lara",
+    arah: "-",
+    catatan: "",
+  },
+  { // 24 Bala
+    dewa: "Bethari Durga",
+    lambang: "Pohon Cemara; Manuk Ayam Alas",
+    watak: "Wani lan cenderung gumedhe; pohon Cemara lambang seneng omong lan umuk; disenengi wong pangkat; kerep gawe rame.",
+    baik: "Sowan kanca, dadi utusan, mbiyantu mesuwurake rembugan",
+    tidakBaik: "Mulang ilmu, mulangake kawruh kabatinan, mbenakake apa wae",
+    arah: "Kulon Laut (Barat Laut)",
+    catatan: "",
+  },
+  { // 25 Wugu
+    dewa: "Singajanma",
+    lambang: "Pohon Wuni (gawe wong liya meri babagan rejeki)",
+    watak: "Gampang tersinggung lan seneng nyendhiri; jembar wawasane; kethit; kesetiakawanan dhuwur nganti gelem kurban tekan mati.",
+    baik: "Mbenakake omah, lelungan golek rejeki, tanem tetuwuhan umbi-umbian",
+    tidakBaik: "Kekancan (prekara metu mburi nalika golek pangupa jiwa)",
+    arah: "Kidul (Selatan)",
+    catatan: "",
+  },
+  { // 26 Wayang
+    dewa: "Bethari Sri — rupawan lan mukti uripe",
+    lambang: "Pohon Cempaka (arum); Manuk Ayam Alas; unsur banyu — \"madhep banyu ing jembangan\"",
+    watak: "Akeh sing seneng, duwe wibawa; tulus ikhlas lan bekti; sabar; gampang ing ngarep, angel ing mburi.",
+    baik: "Golek rejeki, ngangsu kawruh kabatinan",
+    tidakBaik: "Nyambangi wong lara, perang, ngrancang prekara",
+    arah: "-",
+    catatan: "Ngedohi manjat sasuwene 7 dina wuku iki.",
+  },
+  { // 27 Kulawu
+    dewa: "Bethara Sadana",
+    lambang: "Pohon Tal (lambang dawa umur); Manuk Nori (lambang loman lan mangane akeh); pepenget \"Kulawu embun tiba ing sendang agung\" — samubarang nemu papane sing pas",
+    watak: "Loman tanpa ngarep pinuji; kekarepane kuwat; potensi bebaya saka ula lan kewan mandi.",
+    baik: "Nambani wong lara, mantenan, wayuh, kekancan",
+    tidakBaik: "Lelungan adoh, pindhah panggonan, mbukak alas",
+    arah: "Lor (Utara)",
+    catatan: "",
+  },
+  { // 28 Dukut
+    dewa: "Bethara Sakri",
+    lambang: "Suket/rumpun Dukut — kaya kasingkirake",
+    watak: "Landhep atine lan gampang tersinggung; kekarepan kuwat; nampa nasib kanthi legawa; ngati-ati babagan dhuwit, cenderung irit; luwih seneng srawung karo wong pangkat/wibawa.",
+    baik: "Mbenakake omah, mbukak kebon, golek jodho, gawe tamba lan sesaji",
+    tidakBaik: "Golek pangupa jiwa, ngangsu kawruh kabatinan",
+    arah: "Kidul Kulon (Barat Daya)",
+    catatan: "",
+  },
+  { // 29 Watugunung
+    dewa: "Bethara Anantaboga",
+    lambang: "Pohon Wijaya Kusuma; Manuk Gogik; madhep candi",
+    watak: "Uripe kaya pandhita (saka lambang wit); akeh omong nanging isi pitutur (saka lambang manuk); wong sing tansah rekasa amarga tumindake dhewe.",
+    baik: "Golek kawarasan, tanem tuwuh, kekancan, besanan",
+    tidakBaik: "Gawe pager pekarangan, nyimpen bandha",
+    arah: "Wetan (Timur)",
+    catatan: "",
+  },
+];
 
 // ================= KALENDER HIJRIYAH [SOLID — tabular/civil] =================
 // Cathetan: iki kalender Hijriyah TABULAR (aritmetik tetep), dudu rukyatul hilal.
@@ -155,6 +443,83 @@ function cocokSerasiOf(nama1, nama2) {
   let sisa = total % 9;
   if (sisa === 0) sisa = 9;
   return { v1, v2, total, sisa, kategori: COCOK_SERASI_KATEGORI[sisa] };
+}
+
+// ================= COCOK NIKAH BETALJEMUR [USULAN — during ditashih] =================
+// Sumber: Kitab Primbon Betaljemur Adammakna (terjemahan Indonesia, KPH
+// Tjakraningrat, digitalisasi Wikimedia Commons/Pustakatama, public domain).
+// Dul WAOS DHEWE langsung saka kaca 12-13 lan 17 PDF asli (dudu ringkesan
+// pihak katelu) kanggo No.15 lan No.16 — teks isih basa Indonesia asli
+// (dudu diterjemahake, ben paling cedhak karo sumber). No.23 saka riset
+// agent sing uga maca langsung kaca 17, kanthi conto itungan sing dicek
+// bener kanthi matematika. Telu-telune BEDA rumus lan BEDA saka Jodoh Weton
+// (LFNU Jombang, mod-10/7) sing wis ana ing ndhuwur — pelengkap, dudu
+// gantine. Tetep USULAN nganti ditashih Gus Fi, senajan sumbere primer.
+
+// No.15 (kaca 12-13): neptu SAWIJINE wong (dudu dijumlah!) dibagi 9 kapisah
+// kanggo calon suami lan calon isteri, banjur pasangan sisa (1-9, 0->9)
+// dilebokake tabel 45 kombinasi (ora urut, "a lan b" padha karo "b lan a").
+const BETALJEMUR_15_TABEL = {
+  "1-1": "Baik, saling mencintai", "1-2": "Baik", "1-3": "Kuat tetapi rejekinya jauh",
+  "1-4": "Banyak celakanya", "1-5": "Bercerai", "1-6": "Sulit kehidupannya",
+  "1-7": "Banyak musuh", "1-8": "Sengsara", "1-9": "Tempat berlindung",
+  "2-2": "Selamat, rejeki banyak", "2-3": "Salah satu meninggal terlebih dahulu",
+  "2-4": "Banyak mengalami godaan", "2-5": "Banyak celakanya", "2-6": "Cepat menjadi kaya",
+  "2-7": "Banyak anaknya yang mati", "2-8": "Murah rejeki", "2-9": "Banyak rejeki",
+  "3-3": "Melarat", "3-4": "Banyak celakanya", "3-5": "Cepat bercerai",
+  "3-6": "Mendapat anugerah", "3-7": "Banyak celakanya", "3-8": "Salah satu meninggal terlebih dahulu",
+  "3-9": "Banyak rejeki",
+  "4-4": "Sering sakit", "4-5": "Banyak mengalami godaan", "4-6": "Banyak rejeki",
+  "4-7": "Melarat", "4-8": "Mengalami banyak rintangan", "4-9": "Salah satu kalah",
+  "5-5": "Mengalami keberuntungan terus menerus", "5-6": "Murah rejeki",
+  "5-7": "Mata pencahariannya tetap terus ada", "5-8": "Mengalami banyak rintangan", "5-9": "Murah rejeki",
+  "6-6": "Banyak celakanya", "6-7": "Rukun damai/Tenteram", "6-8": "Banyak musuh", "6-9": "Sengsara",
+  "7-7": "Terhukum oleh istrinya", "7-8": "Terhalang karena dirinya sendiri/mendapat celaka dari diri sendiri",
+  "7-9": "Perjodohannya kekal",
+  "8-8": "Dicintai oleh orang lain", "8-9": "Banyak celakanya",
+  "9-9": "Susah rejeki",
+};
+function betaljemur15Of(neptuA, neptuB) {
+  let sA = neptuA % 9; if (sA === 0) sA = 9;
+  let sB = neptuB % 9; if (sB === 0) sB = 9;
+  const key = sA <= sB ? `${sA}-${sB}` : `${sB}-${sA}`;
+  return { sisaA: sA, sisaB: sB, arti: BETALJEMUR_15_TABEL[key] };
+}
+
+// No.16 (kaca 13): neptu suami+isteri DIJUMLAH, dibagi 4.
+const BETALJEMUR_16_KATEGORI = {
+  1: { nama: "Gonto", arti: "Jarang duwe anak." },
+  2: { nama: "Gembili", arti: "Akeh anake." },
+  3: { nama: "Sri", arti: "Akeh rejekine." },
+  4: { nama: "Punggel", arti: "Salah sijine bakal ninggal luwih dhisik." },
+};
+function betaljemur16Of(neptuA, neptuB) {
+  const total = neptuA + neptuB;
+  let sisa = total % 4; if (sisa === 0) sisa = 4;
+  return { total, sisa, ...BETALJEMUR_16_KATEGORI[sisa] };
+}
+
+// No.23 (kaca 17): neptu suami+isteri DIJUMLAH, dibagi 5. "Sing apik tiba ing
+// Sri, Dana, lan Lungguh, kosok baline ing Lara lan Pati."
+const BETALJEMUR_23_KATEGORI = {
+  1: { nama: "Sri", arti: "Slamet, rejekine tansah gilir gumanti.", baik: true },
+  2: { nama: "Dana", arti: "Akeh rejekine.", baik: true },
+  3: { nama: "Lara", arti: "Kangelan/kasusahan.", baik: false },
+  4: { nama: "Pati", arti: "Sengsara, kerep tinemu pati.", baik: false },
+  5: { nama: "Lungguh", arti: "Duwe pangkat/drajat.", baik: true },
+};
+function betaljemur23Of(neptuA, neptuB) {
+  const total = neptuA + neptuB;
+  let sisa = total % 5; if (sisa === 0) sisa = 5;
+  return { total, sisa, ...BETALJEMUR_23_KATEGORI[sisa] };
+}
+
+function cocokNikahBetaljemurOf(neptuA, neptuB) {
+  return {
+    no15: betaljemur15Of(neptuA, neptuB),
+    no16: betaljemur16Of(neptuA, neptuB),
+    no23: betaljemur23Of(neptuA, neptuB),
+  };
 }
 
 // ================= TEMU MANTEN [SOLID — Al-Futuhat Kwagean, dijupuk saka app asli] =================
@@ -581,8 +946,127 @@ function planetaryHourOf(date, lat, lon) {
     dayRulerPlanet: CHALDEAN_ORDER[startIdx],
     sunrise: dayStart, sunset: dayEnd, nightEnd,
     dayHourLenMin: dayHourLen / 60000, nightHourLenMin: nightHourLen / 60000,
+    hukum: hourIndex <= 12 ? SAAT_KAWAKIB_HUKUM[rulerDate.getDay()][hourIndex - 1] : null, // mung jam rina
   };
 }
+
+// Hukum/kegunaan saben jam rina (jam 1-12) miturut dinten [USULAN — during
+// ditashih, PERLU NGATI-ATI EKSTRA]. Sumbere Gus Fi ngirim kaca kitab
+// menyang ChatGPT, banjur ChatGPT sing nyusun/nerangake dadi tabel iki —
+// Dul DHEWE during tau ndeleng kaca kitab asline, dadi during bisa
+// mbandhingake langsung kaya sing dilakoni kanggo Wuku/Betaljemur (sing
+// dibaca Dul langsung saka PDF asli). Urutan planet-e (CHALDEAN_ORDER,
+// dikonfirmasi cocog karo DAY_RULER_START_INDEX sing wis SOLID) dipercaya,
+// nanging teks "hukum" panganggo saben jam iki durung diverifikasi
+// primer — mangga tashih Gus Fi, utawa yen isih nyimpen kaca kitab asline,
+// apike dicocogake maneh langsung.
+const SAAT_KAWAKIB_HUKUM = [
+  // 0 Ahad (Minggu)
+  [
+    "Apik kanggo mahabbah, qabul, sowan ngarep raja/panguwasa, prekara hukum, lan nganggo busana anyar.",
+    "Jam madzmumah (ala) — ora dianjurake kanggo tumindak wigati.",
+    "Apik kanggo lelungan, tulis-tulis, mahabbah, qabul, lan prekara komunikasi.",
+    "Ora dianjurake kanggo tuku, dagang, lan transaksi.",
+    "Kanggo pisahan, mungsuhan, sengit, lan prekara sing sipate atos.",
+    "Apik kanggo nyuwun hajat marang para raja/panguwasa.",
+    "Ora sae kanggo tumindak umum.",
+    "Sae banget, cocog kanggo akeh hajat lan macem-macem urusan.",
+    "Apik kanggo nulis marang wong, narik simpati, mahabbah, lan nyenengake ati.",
+    "Apik kanggo urusan tulisan, dagang/komunikasi lan prekara intelektual.",
+    "Apik kanggo talisman, cincin/jimat lan prekara sing sesambungan karo barang tartamtu.",
+    "Ora dianjurake, kajaba prekara sing sipate negatif/mbebayani.",
+  ],
+  // 1 Senin
+  [
+    "Mahabbah, narik ati, lan prekara qabul.",
+    "Lelungan lan perjalanan.",
+    "Nulis kitab, layang, lan prekara tulisan.",
+    "Prekara sesambungan karo konflik/lelara lan perkara abot.",
+    "Nyenengake ati/narik simpati lan prekara qabul.",
+    "Prekara perawatan, pangobatan, lan perkara wanita.",
+    "Ngalahake/nalikake lisan, komunikasi lan perkara qabul.",
+    "Nikah lan rukun antarane wong sing beda.",
+    "Pisahan, mungsuhan, sengit.",
+    "Jam sing sae banget, cocog kanggo macem-macem hajat.",
+    "Prekara mungsuhan, perang, lan getih.",
+    "Prekara nalikake, nutup, utawa perkara-perkara tartamtu.",
+  ],
+  // 2 Selasa
+  [
+    "Prekara sing sipate keras/wani, nanging ora kanggo perkara alus.",
+    "Qabul lan pangestu, mligine tumrap panguwasa.",
+    "Obat/pangobatan, wanita, lan pernikahan.",
+    "Dagang, tuku, adol, lan komunikasi.",
+    "Ora dianjurake kanggo tumindak wigati.",
+    "Nulis prekara lelara, perkara abot, lsp.",
+    "Apik kanggo kabutuhan lan barang sing dikarepake.",
+    "Prekara kekuatan, konflik, lan urusan abot.",
+    "Nikah, mahabbah, lan qabul.",
+    "Ora dianjurake kanggo tumindak.",
+    "Bisa kanggo ngatur lelungan/perjalanan lan prekara komunikasi.",
+    "Apik kanggo prekara mungsuhan, karusakan, pegatan, lan liya-liyane.",
+  ],
+  // 3 Rebo (Rabu)
+  [
+    "Qabul, tulisan, lan prekara intelektual.",
+    "Ora dianjurake.",
+    "Perkara lelara, tatu, lan prekara abot.",
+    "Apik kanggo hajat umum.",
+    "Prekara mungsuhan, getih, lan perkara keras.",
+    "Hajat, qabul, lan prekara panguwasa.",
+    "Mahabbah lan kualitas/asil sing sae.",
+    "Tulisan, sinau, lan urusan anak.",
+    "Ora sae kanggo pegatan, mungsuhan, lan fitnah.",
+    "Apik kanggo sowan/ngadhep panguwasa lan wong sing duwe kedudukan.",
+    "Apik kanggo qabul, perjanjian, lan rembugan karo panguwasa.",
+    "Prekara mungsuhan lan perkara kasar.",
+  ],
+  // 4 Kemis (Kamis)
+  [
+    "Rejeki, dagang, qabul, lan asil.",
+    "Prekara abot, paukuman, lan perkara sing atos.",
+    "Qabul lan prekara panguwasa, kalebu lelungan tartamtu.",
+    "Mahabbah lan nikah.",
+    "Akad antarane priya-wanita, tulisan, lan komunikasi.",
+    "Lelungan dharat/segara lan macem-macem pakaryan.",
+    "Prekara tartamtu sing sesambungan karo tulisan/ahli tulis.",
+    "Sae kanggo saben pakaryan.",
+    "Kanggo sowan raja/panguwasa.",
+    "Nyuwun hajat marang para pejabat, pangeran, lan wong sing duwe kedudukan.",
+    "Qabul lan mahabbah.",
+    "Ora dianjurake, jam sing ala/madzmumah.",
+  ],
+  // 5 Jemuwah (Jumat)
+  [
+    "Mahabbah, lamaran, lan nikah.",
+    "Talisman/tulisan lan tembung-tembung.",
+    "Ora dianjurake, jam ala.",
+    "Prekara ndhudhuk, sumur, lemah, lan barang-barang ing lemah.",
+    "Qabul, wanita, para raja/panguwasa.",
+    "Prekara sowan panguwasa lan perkara hukum.",
+    "Lamaran lan nikah.",
+    "Prekara kerja lan komunikasi.",
+    "Pisahan lan fitnah — nanging miturut sumber, respone cepet.",
+    "Sumber during cetha kanggo jam iki.",
+    "Sumber during cetha kanggo jam iki.",
+    "Lelungan lan nindakake hajat tartamtu.",
+  ],
+  // 6 Setu (Sabtu)
+  [
+    "Qabul lan mahabbah miturut sumber.",
+    "Rukun antarane wong.",
+    "Mungsuhan lan perkara ala.",
+    "Sowan panguwasa/raja lan perkara hukum.",
+    "Prekara mahabbah lan perkara wanita.",
+    "Tulisan lan prekara dagang/pakaryan tartamtu.",
+    "Ora sae, ora dianjurake kanggo pakaryan.",
+    "Lelara, obat, tatu, lan prekara abot.",
+    "Apik kanggo macem-macem tumindak/hajat.",
+    "Prekara perkara keras.",
+    "Qabul nalika sowan raja, menteri, lan para pembesar.",
+    "Kalebu prekara mahabbah/pernikahan.",
+  ],
+];
 
 // Tabel lengkap 24 jam kanggo "dina petungan" sing ana ing date (terbit->terbit sabanjure).
 function planetaryHourTable(date, lat, lon) {
@@ -610,6 +1094,7 @@ function planetaryHourTable(date, lat, lon) {
       planet: CHALDEAN_ORDER[(startIdx + h - 1) % 7],
       label: CHALDEAN_LABEL[CHALDEAN_ORDER[(startIdx + h - 1) % 7]],
       isCurrent: h === info.hourIndex,
+      hukum: isDay ? SAAT_KAWAKIB_HUKUM[rulerDate.getDay()][h - 1] : null, // mung jam rina, during ana data jam wengi
     });
   }
   return { rows, rulerWeekday: HARI_NAMA[rulerDate.getDay()], sunrise: rs.sunrise, sunset: rs.sunset, nextSunrise: tmrSun.sunrise };

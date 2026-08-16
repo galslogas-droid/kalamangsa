@@ -227,6 +227,17 @@
       <div class="result" id="result-jodoh"></div>
     </section>
 
+    <section class="screen" id="screen-betaljemur">
+      <div class="topbar">
+        <button class="backBtn" data-back>&larr;</button>
+        <div class="screenTitle">Cocok Nikah Betaljemur</div>
+      </div>
+      <p class="screenDesc">Lebokna tanggal lair calon suami &amp; isteri, miturut Kitab Primbon Betaljemur Adammakna (3 rumus pelengkap Jodoh Weton).</p>
+      <div class="field"><label>Tanggal lair — Calon suami</label><input type="date" id="betaljemurA"></div>
+      <div class="field"><label>Tanggal lair — Calon isteri</label><input type="date" id="betaljemurB"></div>
+      <div class="result" id="result-betaljemur"></div>
+    </section>
+
     <section class="screen" id="screen-cocok">
       <div class="topbar">
         <button class="backBtn" data-back>&larr;</button>
@@ -264,6 +275,7 @@
       <div id="kawakibContent" style="display:none;">
         <div class="result" id="result-kawakib"></div>
         <table class="mini" id="kawakibTable"></table>
+        <div id="kawakibHukumWrap"></div>
       </div>
     </section>
 
@@ -315,7 +327,20 @@ const SCREENS = [
         <div class="row"><span class="k">Kalender Hijriyah</span><span class="v">${h.tanggal} ${h.bulan} ${h.tahun} H</span></div>
         <div class="note">Kalender Hijriyah kene sacara aritmetik (tabular), bisa selisih ±1 dina karo pengumuman rukyatul hilal resmi.</div>
         <div class="usulan">◈ BELUM DITASHIH &mdash; Wuku during ditashih</div>
-        <div class="note">Urutan wuku dicek riset web, dikalibrasi tanggal 16 Agustus 2026 = Medangkungan (sumber ki-demang.com). Watak/dewa saben wuku during dilebokake — during ketemu rujukan sing genah.</div>
+        <div class="note">Urutan wuku dicek riset web, dikalibrasi tanggal 16 Agustus 2026 = Medangkungan (sumber ki-demang.com).</div>
+        <details style="margin-top:0.5rem;">
+          <summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--gold);">Dewa, watak &amp; pantangan wuku ${wk.nama} (ki-demang.com)</summary>
+          <div class="note" style="margin-top:0.5rem;">
+            <b>Sing mangku:</b> ${wk.dewa}<br>
+            ${wk.lambang ? `<b>Lambang:</b> ${wk.lambang}<br>` : ""}
+            <b>Watak:</b> ${wk.watak}<br>
+            <b>Becik kanggo:</b> ${wk.baik}<br>
+            ${wk.tidakBaik ? `<b>Kurang becik kanggo:</b> ${wk.tidakBaik}<br>` : ""}
+            ${wk.arah && wk.arah !== "-" ? `<b>Ngedohi lelungan mangulon/mangetan:</b> ${wk.arah}<br>` : ""}
+            ${wk.catatan ? `<b>Katrangan tambahan:</b> ${wk.catatan}` : ""}
+          </div>
+          <div class="note" style="margin-top:0.4rem;">Diterjemahake dhewe saka basa Indonesia (sumber ki-demang.com), during dicocogake langsung karo kitab primbon asli — during ditashih Gus Fi.</div>
+        </details>
         <div class="note"><b>Tabel Neptu</b> (padha karo app asli):<br>
         Ahad(5) &middot; Senin(4) &middot; Selasa(3) &middot; Rebo(7) &middot; Kemis(8) &middot; Jemuwah(6) &middot; Setu(9)<br>
         Legi(5) &middot; Pahing(9) &middot; Pon(7) &middot; Wage(4) &middot; Kliwon(8)</div>`;
@@ -421,6 +446,7 @@ const SCREENS = [
 const ICONS = {
   weton: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="7" y1="3" x2="7" y2="7"/><line x1="17" y1="3" x2="17" y2="7"/></svg>',
   jodoh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>',
+  betaljemur: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
   cocok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-6.8-4.1-9-8.1C1.4 9 2.8 5.7 6.1 5.7c1.9 0 3.4 1.1 5.9 3.8 2.5-2.7 4-3.8 5.9-3.8 3.3 0 4.7 3.3 3.1 6.7-2.2 4-9 8.1-9 8.1z"/></svg>',
   manten: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V10a7 7 0 0 1 14 0v11"/><line x1="3" y1="21" x2="21" y2="21"/></svg>',
   usaha: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-5h14l1 5"/><path d="M4 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M5 9.5V20h14V9.5"/><rect x="10" y="14" width="4" height="6"/></svg>',
@@ -436,6 +462,7 @@ const ICONS = {
 // ing kene supaya bisa melu dibagi kategori/bab bareng SCREENS.
 const EXTRA_CARDS = [
   { id: "jodoh", title: "Jodoh Weton", home: "Kecocokan saka neptu weton loro wong.", category: "jodoh" },
+  { id: "betaljemur", title: "Cocok Nikah Betaljemur", home: "3 rumus pelengkap saka Primbon Betaljemur Adammakna.", category: "jodoh", flagged: true },
   { id: "cocok", title: "Cocok Serasi", home: "Kecocokan saka jeneng aksara Arab.", category: "jodoh" },
   { id: "manten", title: "Temu Manten", home: "Petung tanggal nikah + tanggal alternatif.", category: "jodoh" },
   { id: "kawakib", title: "Sa'at Kawakib", home: "Jam planet — warisan falak-nujum klasik.", category: "nujum" },
@@ -575,6 +602,33 @@ function updateJodoh() {
 jodohA.addEventListener("change", updateJodoh);
 jodohB.addEventListener("change", updateJodoh);
 updateJodoh();
+
+// ============ Cocok Nikah Betaljemur ============
+const betaljemurA = document.getElementById("betaljemurA");
+const betaljemurB = document.getElementById("betaljemurB");
+[betaljemurA, betaljemurB].forEach((el) => (el.valueAsDate = new Date()));
+function updateBetaljemur() {
+  const dA = betaljemurA.valueAsDate;
+  const dB = betaljemurB.valueAsDate;
+  const out = document.getElementById("result-betaljemur");
+  if (!dA || !dB) { out.innerHTML = ""; return; }
+  const wA = wetonOf(dA), wB = wetonOf(dB);
+  const c = cocokNikahBetaljemurOf(wA.neptu, wB.neptu);
+  out.innerHTML = `
+    <div class="usulan">◈ BELUM DITASHIH</div>
+    <div class="row"><span class="k">Weton calon suami</span><span class="v">${wA.hari} ${wA.pasaran} (${wA.neptu})</span></div>
+    <div class="row"><span class="k">Weton calon isteri</span><span class="v">${wB.hari} ${wB.pasaran} (${wB.neptu})</span></div>
+    <div class="note" style="margin-top:0.7rem;"><b>No.15 &middot; neptu kapisah, dibagi 9</b><br>
+      Sisa suami ${c.no15.sisaA}, sisa isteri ${c.no15.sisaB} &rarr; <b>${c.no15.arti || "(kombinasi during kacathet)"}</b></div>
+    <div class="note"><b>No.16 &middot; neptu dijumlah, dibagi 4</b><br>
+      ${c.no16.total} &divide; 4, sisa ${c.no16.sisa} &rarr; <b>${c.no16.nama}</b> — ${c.no16.arti}</div>
+    <div class="note"><b>No.23 &middot; neptu dijumlah, dibagi 5</b><br>
+      ${c.no23.total} &divide; 5, sisa ${c.no23.sisa} &rarr; <b>${c.no23.nama}</b> <span style="color:${c.no23.baik ? "var(--good)" : "var(--warn)"}">(${c.no23.baik ? "apik" : "kurang apik"})</span> — ${c.no23.arti}</div>
+    <div class="note" style="margin-top:0.7rem;">Sumber: Kitab Primbon Betaljemur Adammakna (terjemahan Indonesia, KPH Tjakraningrat, digitalisasi Wikimedia Commons — dhata public domain). Dul waos dhewe langsung saka kaca 12-13 lan 17 PDF asli. Telu-telu rumus iki PELENGKAP Jodoh Weton ing ndhuwur (beda sumber, beda rumus), dudu gantine. Isih during ditashih Gus Fi.</div>`;
+}
+betaljemurA.addEventListener("change", updateBetaljemur);
+betaljemurB.addEventListener("change", updateBetaljemur);
+updateBetaljemur();
 
 // jinis input sing dijaluk kudu aksara Arab, dudu Latin (padha karo validasi app asli)
 const LATIN_ONLY_RE = /^[a-zA-Z\s]*$/;
@@ -775,7 +829,11 @@ function renderKawakib(lat, lon) {
     <div class="row"><span class="k">Srengenge surup</span><span class="v">${fmtTime(table.sunset)}</span></div>
     <div class="row"><span class="k">Dawa 1 jam (raina)</span><span class="v">${fmtDur(info.dayHourLenMin)}</span></div>
     <div class="row"><span class="k">Dawa 1 jam (wengi)</span><span class="v">${fmtDur(info.nightHourLenMin)}</span></div>
-    <div class="note">Apik/ala miturut tradisi klasik (benefik/malefik), dudu hukum fiqh. Musytari &amp; Zuhrah = apik, Zuhal &amp; Marikh = ala, Syams condong apik, Utarid &amp; Qomar netral.</div>`;
+    <div class="note">Apik/ala miturut tradisi klasik (benefik/malefik), dudu hukum fiqh. Musytari &amp; Zuhrah = apik, Zuhal &amp; Marikh = ala, Syams condong apik, Utarid &amp; Qomar netral.</div>
+    ${info.hukum ? `
+    <div class="usulan">◈ BELUM DITASHIH</div>
+    <div class="note"><b>Panganggo jam iki:</b> ${info.hukum}</div>
+    <div class="note">Katrangan iki during dicek Dul langsung saka kitab asli (dijupuk saka rembugan Gus Fi karo ChatGPT sing maca kaca kitab) — urutan planet-e wis SOLID, nanging teks panganggo jam during ditashih.</div>` : ""}`;
 
   document.getElementById("kawakibTable").innerHTML =
     `<tr><th>Jam</th><th>Wektu</th><th>Planet</th><th>Label</th></tr>` +
@@ -785,6 +843,19 @@ function renderKawakib(lat, lon) {
           `<tr${r.isCurrent ? ' style="font-weight:700;color:var(--gold)"' : ""}><td>${r.hourIndex <= 12 ? "R" + r.hourIndex : "W" + (r.hourIndex - 12)}</td><td>${fmtTime(r.start)}–${fmtTime(r.end)}</td><td>${r.planet}</td><td style="color:${labelColor[r.label]}">${r.label}</td></tr>`
       )
       .join("");
+
+  const hukumRows = table.rows.filter((r) => r.hukum);
+  const hukumWrap = document.getElementById("kawakibHukumWrap");
+  if (hukumWrap) {
+    hukumWrap.innerHTML = hukumRows.length ? `
+      <details style="margin-top:0.7rem;">
+        <summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--gold);">Panganggo 12 jam rina (${table.rulerWeekday}) ◈ during ditashih</summary>
+        <div class="note" style="margin-top:0.5rem;">
+          ${hukumRows.map((r) => `<div style="margin-bottom:0.5rem;"><b>Jam R${r.hourIndex} &middot; ${r.planet}</b> (${fmtTime(r.start)}–${fmtTime(r.end)}): ${r.hukum}</div>`).join("")}
+        </div>
+        <div class="note" style="margin-top:0.4rem;">Sumber: rembugan Gus Fi karo ChatGPT sing maca kaca kitab, during dicek Dul langsung karo kitab asli.</div>
+      </details>` : "";
+  }
 }
 
 function startKawakib(lat, lon) {
