@@ -95,9 +95,13 @@
   /* kategori + grid */
   .catHeader{
     font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-    color:var(--gold);margin:1.3rem 0 0.6rem;display:flex;align-items:center;gap:0.4rem;
+    color:var(--gold);margin:1.3rem 0 0.15rem;display:flex;align-items:center;gap:0.4rem;
   }
   .catHeader:first-of-type{margin-top:0;}
+  .catNote{
+    font-size:0.68rem;color:var(--muted);font-weight:400;letter-spacing:0;
+    text-transform:none;margin:0 0 0.6rem;
+  }
   .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.7rem;}
   .card{
     background:var(--surface);border:1px solid var(--rule);border-radius:12px;
@@ -270,7 +274,7 @@
       </div>
       <p class="screenDesc">Ketik utawa tempel tembung/ukara/ayat nganggo aksara Arab (dudu transliterasi otomatis, supaya ejaane pas), banjur delengen nilai abjade lan statistike.</p>
       <input type="text" id="abjadDisplay" class="abjad-arabic" dir="rtl" placeholder="Ketuk huruf ing ngisor iki…" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <div class="keyboard" id="abjadKeyboard"></div>
+      <div class="keyboard" id="abjadKeyboard" dir="rtl"></div>
       <div class="kbActions">
         <button type="button" id="abjadBack">&larr; Mundur</button>
         <button type="button" id="abjadClear">Wiwit maneh</button>
@@ -328,7 +332,8 @@ const SCREENS = [
         <div class="goodtag">RUMUS TERVALIDASI (padha karo app asli)</div>
         <div class="big">${w.hari} ${w.pasaran}</div>
         <div class="sub">Neptu ${w.neptu} : 4, sisa ${w.neptu % 4}</div>
-        <div class="row"><span class="k">Kategori</span><span class="v">${hasil}</span></div>`;
+        <div class="row"><span class="k">Kategori</span><span class="v">${hasil}</span></div>
+        <div class="note">Petungan tradisi kanggo tuntunan, dudu jaminan asil usaha.</div>`;
     },
   },
   {
@@ -342,7 +347,8 @@ const SCREENS = [
         <div class="goodtag">RUMUS TERVALIDASI (padha karo app asli)</div>
         <div class="big">${w.hari} ${w.pasaran}</div>
         <div class="sub">Neptu ${w.neptu} : 5, sisa ${w.neptu % 5}</div>
-        <div class="row"><span class="k">Kategori</span><span class="v">${hasil}</span></div>`;
+        <div class="row"><span class="k">Kategori</span><span class="v">${hasil}</span></div>
+        <div class="note">Petungan tradisi kanggo tuntunan, dudu jaminan asil.</div>`;
     },
   },
   {
@@ -360,7 +366,7 @@ const SCREENS = [
     },
   },
   {
-    id: "mangsa", badge: "P", icon: "🌾", category: "langit", title: "Pranata Mangsa",
+    id: "mangsa", badge: "P", icon: "🌾", category: "kalender", title: "Pranata Mangsa",
     desc: "Kalender musim tani Jawa kuna, adhedhasar posisi srengenge.",
     home: "Kalender musim/tani Jawa (12 mangsa).",
     render(date) {
@@ -377,7 +383,7 @@ const SCREENS = [
     },
   },
   {
-    id: "zodiak", badge: "Z", icon: "♈", category: "langit", title: "Zodiak &amp; Tabiat Abu Ma'syar",
+    id: "zodiak", badge: "Z", icon: "♈", category: "nujum", title: "Zodiak &amp; Tabiat Abu Ma'syar",
     desc: "Buruj miturut tradisi astrologi Arab-Islam klasik. App asli nduweni 2 mode: Mode 1 (Pendekatan) miturut tanggal lair, Mode 2 (Sesuai Kitab) miturut jeneng anak+ibu.",
     home: "12 Buruj (Haml—Huut) miturut Abu Ma'syar — 2 mode itungan.",
     render(date) {
@@ -395,7 +401,7 @@ const SCREENS = [
     },
   },
   {
-    id: "manzilah", badge: "B", icon: "🌙", category: "langit", title: "Manzilah",
+    id: "manzilah", badge: "B", icon: "🌙", category: "nujum", title: "Manzilah",
     desc: "28 manzilah rembulan (manazil al-qamar).",
     home: "28 rumah rembulan — miturut posisi bujur ekliptika.",
     flagged: true,
@@ -432,15 +438,16 @@ const EXTRA_CARDS = [
   { id: "jodoh", title: "Jodoh Weton", home: "Kecocokan saka neptu weton loro wong.", category: "jodoh" },
   { id: "cocok", title: "Cocok Serasi", home: "Kecocokan saka jeneng aksara Arab.", category: "jodoh" },
   { id: "manten", title: "Temu Manten", home: "Petung tanggal nikah + tanggal alternatif.", category: "jodoh" },
-  { id: "kawakib", title: "Sa'at Kawakib", home: "Jam planet — warisan falak-nujum klasik.", category: "langit" },
+  { id: "kawakib", title: "Sa'at Kawakib", home: "Jam planet — warisan falak-nujum klasik.", category: "nujum" },
   { id: "tabiat", title: "Abjad &amp; Tabiat", home: "Nilai abjad tembung/ayat (aksara Arab).", category: "abjad" },
 ];
 
 const CATEGORIES = [
-  { key: "jodoh", bab: "02", title: "Jodoh & Perjodohan" },
-  { key: "laku", bab: "03", title: "Laku & Panggonan" },
-  { key: "langit", bab: "04", title: "Mangsa & Langit" },
-  { key: "abjad", bab: "05", title: "Abjad & Hisab" },
+  { key: "jodoh", bab: "02", title: "Jodoh & Perjodohan", note: "Petungan tradisi kanggo tuntunan, dudu kepastian nasib." },
+  { key: "laku", bab: "03", title: "Laku & Panggonan", note: "Petungan tradisi kanggo tuntunan, dudu jaminan asil." },
+  { key: "kalender", bab: "04", title: "Kalender & Mangsa", note: "Sistem kalender/musim Jawa — dudu ramalan." },
+  { key: "nujum", bab: "05", title: "Turats Nujum Klasik", note: "Warisan ilmu nujum-falak klasik (historis), dudu hukum fiqh." },
+  { key: "abjad", bab: "06", title: "Abjad & Hisab" },
 ];
 
 // ============ hero Weton (Bab 01, petungan utama) ============
@@ -473,6 +480,12 @@ function buildHomeCategories() {
     header.className = "catHeader";
     header.textContent = `Bab ${cat.bab} · ${cat.title}`;
     container.appendChild(header);
+    if (cat.note) {
+      const note = document.createElement("div");
+      note.className = "catNote";
+      note.textContent = cat.note;
+      container.appendChild(note);
+    }
     const grid = document.createElement("div");
     grid.className = "grid";
     items.forEach((s, i) => {

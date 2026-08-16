@@ -446,11 +446,14 @@ function abjadAnalyze(text) {
   return { total, letterCount, wordCount: words.length, freq };
 }
 
-// Urutan hijaiyah lumrah (kanggo keyboard input), pisah karo urutan abjad ing ndhuwur
-// (sing kuwi urutan kanggo nilai/hisab jumal, dudu urutan sinau maca).
+// Urutan tombol kaya keyboard fisik Arab (Saudi/QWERTY-mapped: baris ذ / ض..د / ش..ط / ر..ظ),
+// dudu urutan alfabet/hijaiyah maca — supaya jari sing wis kulina keyboard Arab ora bingung.
+// Pisah karo urutan abjad ing calc di ndhuwur (kuwi urutan kanggo nilai/hisab jumal).
 const HIJAIYAH_URUT = [
-  "ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض",
-  "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "و", "ه", "ي",
+  "ذ",
+  "ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "د",
+  "ش", "س", "ي", "ب", "ل", "ا", "ت", "ن", "م", "ك", "ط",
+  "ر", "و", "ز", "ظ",
 ];
 
 // ================= SA'AT KAWAKIB [jam TERVALIDASI + label apik/ala miturut dhawuh Gus Fi] =================
