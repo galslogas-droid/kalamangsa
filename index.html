@@ -318,6 +318,12 @@
 <script>
 "use strict";
 
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+  );
+}
+
 // ============ konfigurasi layar sing pola-e padha (siji tanggal input) ============
 const SCREENS = [
   {
@@ -329,7 +335,7 @@ const SCREENS = [
       const h = hijriOf(date);
       const wk = wukuOf(date);
       return `
-        <div class="goodtag">RUMUS TERVALIDASI</div>
+        <div class="goodtag">RUMUS TERVALIDASI (Weton, Neptu &amp; Hijriyah &mdash; Wuku KEJABA, deleng ngisor)</div>
         <div class="big">${w.hari} ${w.pasaran}</div>
         <div class="sub">Neptu ${w.neptu}</div>
         <div class="row"><span class="k">Hari</span><span class="v">${w.hari} (neptu ${HARI_NEPTU[date.getDay()]})</span></div>
@@ -426,7 +432,7 @@ const SCREENS = [
     render(date) {
       const b = burujOf(date);
       return `
-        <div class="goodtag">RUMUS TERVALIDASI (padha karo app asli)</div>
+        <div class="goodtag">METODE SESUAI APP REFERENSI</div>
         <div class="big">${b.nama}</div>
         <div class="sub">Padanan: ${b.padanan} &middot; Unsur (Tabiat): ${b.unsur}</div>
         <div class="row"><span class="k">Bendha langit sing mangku</span><span class="v">${CHALDEAN_PADANAN[b.planet]} (${b.planet}) <span class="arab">${CHALDEAN_ARAB[b.planet]}</span></span></div>
@@ -449,7 +455,7 @@ const SCREENS = [
         <div class="big">${mz.nama} <span class="arab" style="font-size:1.2rem;color:var(--muted)">${mz.arab}</span></div>
         <div class="sub">Manzil ka-${mz.urutan}/28 &middot; ${mz.arti}</div>
         <div class="row"><span class="k">Bujur ekliptika rembulan</span><span class="v">${mz.derajat.toFixed(1)}&deg;</span></div>
-        <div class="note">Dietung saka posisi rembulan nyata (rumus ekliptika Meeus, akurasi lumrahe sak-derajat), dudu mung dina-ke-n sasi Hijriyah. Ejaan Arab + makna ringkes dicek riset web (dudu saka app referensi, amarga Manzilah pancen dudu fitur app asli). During ditashih Gus Fi.</div>`;
+        <div class="note">Dietung saka posisi rembulan nyata (rumus ekliptika Meeus, akurasi lumrahe sak-derajat), dudu mung dina-ke-n sasi Hijriyah. Ejaan Arab + makna ringkes dicek riset web (dudu saka app referensi, amarga Manzilah pancen dudu fitur app asli). During ditashih Gus Fi. Iki petungan astronomis pendekatan, dudu penetapan hukum agama utawa pituduh ghaib.</div>`;
     },
   },
 ];
@@ -613,8 +619,11 @@ jodohA.addEventListener("change", updateJodoh);
 jodohB.addEventListener("change", updateJodoh);
 updateJodoh();
 
-// jinis input sing dijaluk kudu aksara Arab, dudu Latin (padha karo validasi app asli)
-const LATIN_ONLY_RE = /^[a-zA-Z\s]*$/;
+// jinis input sing dijaluk kudu aksara Arab, dudu Latin (padha karo validasi app
+// asli) -- nolak yen ANA aksara Latin sacuwil wae, dudu mung yen sakabehane Latin,
+// amarga input campuran (mis. "محمد Ahmad") liwate abjadAnalyze() bakal nglangkahi
+// aksara Latin-e tanpa kabar, dadi kudune ditolak wiwitan, ora mlebu itungan senyap.
+const HAS_LATIN_RE = /[a-zA-Z]/;
 
 // ============ Cocok Serasi ============
 const cocokNama1 = document.getElementById("cocokNama1");
@@ -624,19 +633,19 @@ function updateCocok() {
   const n1 = cocokNama1.value.trim();
   const n2 = cocokNama2.value.trim();
   if (!n1 || !n2) { out.innerHTML = ""; return; }
-  if (LATIN_ONLY_RE.test(n1) || LATIN_ONLY_RE.test(n2)) {
-    out.innerHTML = `<div class="usulan">Kolom isian kudu nganggo aksara Arab</div>`;
+  if (HAS_LATIN_RE.test(n1) || HAS_LATIN_RE.test(n2)) {
+    out.innerHTML = `<div class="usulan">Kolom isian kudu nganggo aksara Arab (ampun campur aksara Latin)</div>`;
     return;
   }
   const c = cocokSerasiOf(n1, n2);
   out.innerHTML = `
-    <div class="goodtag">RUMUS TERVALIDASI (padha karo app asli)</div>
+    <div class="goodtag">METODE SESUAI APP REFERENSI</div>
     <div class="row"><span class="k">Nilai abjad A</span><span class="v">${c.v1}</span></div>
     <div class="row"><span class="k">Nilai abjad B</span><span class="v">${c.v2}</span></div>
     <div class="row"><span class="k">${c.v1} + ${c.v2} + 7</span><span class="v">${c.total}</span></div>
     <div class="row"><span class="k">Dibagi 9, sisa</span><span class="v">${c.sisa}</span></div>
     <div class="big" style="margin-top:0.8rem;">(${c.sisa}) ${c.kategori}</div>
-    <div class="note">Metode Abu Ma'syar Al-Falaky (nilai abjad hisab jumal), miturut app referensi.</div>`;
+    <div class="note">Metode Abu Ma'syar Al-Falaky (nilai abjad hisab jumal), miturut app referensi. Iki petungan tradisional, dudu kepastian jodoh utawa penetapan hukum agama.</div>`;
 }
 cocokNama1.addEventListener("input", updateCocok);
 cocokNama2.addEventListener("input", updateCocok);
@@ -655,14 +664,14 @@ function updateManten() {
     .map((a) => `<tr><td>${a.weton.hari} ${a.weton.pasaran}</td><td>${fmtTgl(a.tanggal)}</td></tr>`)
     .join("");
   out.innerHTML = `
-    <div class="goodtag">RUMUS TERVALIDASI (padha karo app asli)</div>
+    <div class="goodtag">METODE SESUAI APP REFERENSI</div>
     <div class="row"><span class="k">Lair Laki-laki</span><span class="v">${t.wL.hari} ${t.wL.pasaran} (${t.wL.neptu})</span></div>
     <div class="row"><span class="k">Lair Wadon</span><span class="v">${t.wW.hari} ${t.wW.pasaran} (${t.wW.neptu})</span></div>
     <div class="row"><span class="k">Rencana Nikah</span><span class="v">${t.wN.hari} ${t.wN.pasaran} (${t.wN.neptu})</span></div>
     <div class="row"><span class="k">${t.wL.neptu} + ${t.wW.neptu} + ${t.wN.neptu}</span><span class="v">${t.total}</span></div>
     <div class="big" style="margin-top:0.8rem;">${t.kategori}</div>
-    <div class="note">Sumber: Al-Futuhat Kwagean.</div>
-    <div class="field" style="margin-top:1rem;"><label>Tanggal alternatif weton padha (${t.wN.hari} ${t.wN.pasaran})</label></div>
+    <div class="note">Sumber: Al-Futuhat Kwagean, miturut app referensi. Iki petungan tradisional, dudu kepastian jodoh utawa penetapan hukum agama.</div>
+    <div class="field" style="margin-top:1rem;"><label>Tanggal alternatif kanthi weton sing padha (${t.wN.hari} ${t.wN.pasaran}) &mdash; dudu tanggal sing "dianjurake"</label></div>
     <table class="mini"><tr><th>Weton</th><th>Tanggal</th></tr>${alt}</table>`;
 }
 [mantenLaki, mantenWadon, mantenNikah].forEach((el) => el.addEventListener("change", updateManten));
@@ -674,13 +683,13 @@ function updateTabiat2() {
   const out = document.getElementById("result-tabiat2");
   const n1 = tabiatNama.value.trim(), n2 = tabiatNamaIbu.value.trim();
   if (!n1 || !n2) { out.innerHTML = ""; return; }
-  if (LATIN_ONLY_RE.test(n1) || LATIN_ONLY_RE.test(n2)) {
-    out.innerHTML = `<div class="usulan">Kolom isian kudu nganggo aksara Arab</div>`;
+  if (HAS_LATIN_RE.test(n1) || HAS_LATIN_RE.test(n2)) {
+    out.innerHTML = `<div class="usulan">Kolom isian kudu nganggo aksara Arab (ampun campur aksara Latin)</div>`;
     return;
   }
   const t = tabiatMode2Of(n1, n2);
   out.innerHTML = `
-    <div class="goodtag">RUMUS TERVALIDASI (padha karo app asli)</div>
+    <div class="goodtag">METODE SESUAI APP REFERENSI</div>
     <div class="row"><span class="k">Nilai abjad jeneng</span><span class="v">${t.v1}</span></div>
     <div class="row"><span class="k">Nilai abjad jeneng ibu</span><span class="v">${t.v2}</span></div>
     <div class="row"><span class="k">${t.v1} + ${t.v2}, dibagi 12 sisa</span><span class="v">${t.total} &rarr; ${t.sisa}</span></div>
@@ -744,8 +753,8 @@ function renderAbjadHistory() {
   abjadHistoryEl.innerHTML = hist
     .map(
       (h, i) => `<div class="row" data-idx="${i}" style="cursor:pointer;">
-        <span class="k arab" style="font-size:1.1rem;">${h.text}</span>
-        <span class="v">${h.total}</span>
+        <span class="k arab" style="font-size:1.1rem;">${esc(h.text)}</span>
+        <span class="v">${esc(h.total)}</span>
       </div>`
     )
     .join("");
@@ -778,10 +787,12 @@ function renderAbjad() {
     .map(([huruf, n]) => `<tr><td class="arab" style="font-size:1.15rem;">${huruf}</td><td>${ABJAD_MAP[huruf]}</td><td>${n}&times;</td><td>${ABJAD_MAP[huruf] * n}</td></tr>`)
     .join("");
   out.innerHTML = `
-    <div class="goodtag">NILAI ABJAD TERVALIDASI</div>
+    <div class="goodtag">HASIL HISAB ABJAD</div>
     <div class="big">${a.total}</div>
     <div class="sub">Total nilai abjad (hisab jumal) &middot; ${a.letterCount} huruf &middot; ${a.wordCount} tembung</div>
     <table class="mini"><tr><th>Huruf</th><th>Nilai</th><th>Cacah</th><th>Jumlah</th></tr>${freqRows}</table>
+    ${a.unrecognizedCount ? `<div class="usulan">⚠️ ${a.unrecognizedCount} karakter ORA dihitung (dudu huruf Abjad Arab — mis. aksara Latin/angka/tandha waca), diliwati senyap saka total ing ndhuwur.</div>` : ""}
+    <div class="note">Konvensi normalisasi sing dianggo: ة dietung minangka ه, ى lan ئ minangka ي, ؤ minangka و, ء/أ/إ/آ minangka ا (konvensi hisab jumal umum) &mdash; sumber liya bisa uga nganggo konvensi beda.</div>
     <div class="note">Tafsir "tabiat/unsur" saka nilai iki DURUNG dilebokake — during ketemu rujukan sing gathuk kanggo ngowahi angka iki dadi kategori watak. Mangga tanglet Gus Fi rumus/kitab rujukan sing dianggo, supaya ora salah tafsir.</div>`;
   clearTimeout(abjadSaveTimer);
   abjadSaveTimer = setTimeout(() => saveAbjadEntry(text, a.total), 900);

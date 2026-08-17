@@ -724,14 +724,15 @@ function abjadAnalyze(text) {
   const freq = {};
   let total = 0;
   let letterCount = 0;
+  let unrecognizedCount = 0;
   for (const ch of cleaned) {
     const base = ABJAD_NORMALIZE[ch] || ch;
-    if (ABJAD_MAP[base] === undefined) continue; // dudu huruf hijaiyah, langkahi
+    if (ABJAD_MAP[base] === undefined) { unrecognizedCount++; continue; } // dudu huruf hijaiyah, langkahi tapi dicathet
     letterCount++;
     total += ABJAD_MAP[base];
     freq[base] = (freq[base] || 0) + 1;
   }
-  return { total, letterCount, wordCount: words.length, freq };
+  return { total, letterCount, wordCount: words.length, freq, unrecognizedCount };
 }
 
 // Urutan tombol kaya keyboard fisik Arab (Saudi/QWERTY-mapped: baris ذ / ض..د / ش..ط / ر..ظ),
