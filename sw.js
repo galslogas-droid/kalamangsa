@@ -1,4 +1,4 @@
-const CACHE_NAME = "kalamangsa-v1";
+const CACHE_NAME = "kalamangsa-v2";
 const APP_SHELL = [
   "./",
   "index.html",
