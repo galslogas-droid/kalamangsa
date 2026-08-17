@@ -137,7 +137,7 @@
 
   .field{margin-bottom:0.9rem;}
   .field label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem;}
-  .field input[type="date"]{
+  .field input[type="date"], .field input[type="text"], .field select{
     width:100%;padding:0.6rem 0.7rem;border-radius:9px;border:1px solid var(--rule);
     background:var(--surface);color:var(--ink);font-size:0.95rem;font-family:inherit;
   }
@@ -227,55 +227,6 @@
       <div class="result" id="result-jodoh"></div>
     </section>
 
-    <section class="screen" id="screen-betaljemur">
-      <div class="topbar">
-        <button class="backBtn" data-back>&larr;</button>
-        <div class="screenTitle">Cocok Nikah Betaljemur</div>
-      </div>
-      <p class="screenDesc">Lebokna tanggal lair calon suami &amp; isteri, miturut Kitab Primbon Betaljemur Adammakna (3 rumus pelengkap Jodoh Weton).</p>
-      <div class="field"><label>Tanggal lair — Calon suami</label><input type="date" id="betaljemurA"></div>
-      <div class="field"><label>Tanggal lair — Calon isteri</label><input type="date" id="betaljemurB"></div>
-      <div class="result" id="result-betaljemur"></div>
-    </section>
-
-    <section class="screen" id="screen-ijab">
-      <div class="topbar">
-        <button class="backBtn" data-back>&larr;</button>
-        <div class="screenTitle">Saat Ijab</div>
-      </div>
-      <p class="screenDesc">Milih jam apik kanggo akad nikah, miturut 3 cara saka Kitab Primbon Betaljemur Adammakna (No.35/36/37).</p>
-      <div class="field"><label>Rencana tanggal nikah</label><input type="date" id="ijabTanggal"></div>
-      <div class="field"><label>Rencana jam ijab (06.00–17.59)</label><input type="time" id="ijabJam" value="09:00"></div>
-      <div class="result" id="result-ijab"></div>
-    </section>
-
-    <section class="screen" id="screen-tglnikah">
-      <div class="topbar">
-        <button class="backBtn" data-back>&larr;</button>
-        <div class="screenTitle">Cek Tanggal Nikah</div>
-      </div>
-      <p class="screenDesc">Mriksa tanggal rencana nikah nglawan pantangan Kitab Primbon Betaljemur Adammakna (No.7-13, 26-33) — kalender Jawa (bulan+windu) diitung saka mesin Hijriyah sing wis ana.</p>
-      <div class="field"><label>Rencana tanggal nikah</label><input type="date" id="tglNikahInput"></div>
-      <div class="result" id="result-tglnikah"></div>
-    </section>
-
-    <section class="screen" id="screen-namabayi">
-      <div class="topbar">
-        <button class="backBtn" data-back>&larr;</button>
-        <div class="screenTitle">Cocok Jeneng Bayi</div>
-      </div>
-      <p class="screenDesc">Miturut Kitab Primbon Betaljemur Adammakna No.65. Ketuk wanda (suku aksara Jawa) sing mbangun jeneng, urut saka ngarep.</p>
-      <div class="usulan">◈ BELUM DITASHIH — EKSTRA ngati-ati (tabel aksara rekonstruksi, dudu kecithak lengkap)</div>
-      <div class="field"><label>Tanggal lair bayi</label><input type="date" id="namabayiTanggal"></div>
-      <div class="field"><label>Wanda jeneng sing dipilih</label><input type="text" id="namabayiDisplay" readonly style="width:100%;padding:0.6rem 0.7rem;border-radius:9px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font-size:0.95rem;"></div>
-      <div class="keyboard" id="namabayiKeyboard"></div>
-      <div class="kbActions">
-        <button type="button" id="namabayiBack">&larr; Mundur</button>
-        <button type="button" id="namabayiClear">Wiwit maneh</button>
-      </div>
-      <div class="result" id="result-namabayi"></div>
-    </section>
-
     <section class="screen" id="screen-cocok">
       <div class="topbar">
         <button class="backBtn" data-back>&larr;</button>
@@ -315,6 +266,26 @@
         <table class="mini" id="kawakibTable"></table>
         <div id="kawakibHukumWrap"></div>
       </div>
+      <details id="kawakibFilterBox" style="margin-top:1rem;">
+        <summary style="cursor:pointer;font-size:0.85rem;font-weight:700;color:var(--gold);">Golek sa'at miturut kabutuhan (mahabbah, dagang, nikah, dst.)</summary>
+        <div style="margin-top:0.7rem;">
+          <div class="field"><label>Dina</label>
+            <select id="kawakibFilterHari">
+              <option value="">Kabeh dina</option>
+              <option value="0">Ahad</option>
+              <option value="1">Senin</option>
+              <option value="2">Selasa</option>
+              <option value="3">Rebo</option>
+              <option value="4">Kemis</option>
+              <option value="5">Jemuwah</option>
+              <option value="6">Setu</option>
+            </select>
+          </div>
+          <div class="field"><label>Tembung kunci (mis. mahabbah, nikah, dagang, lelungan, qabul)</label>
+            <input type="text" id="kawakibFilterKata" placeholder="mahabbah"></div>
+          <div id="kawakibFilterResult"></div>
+        </div>
+      </details>
     </section>
 
     <section class="screen" id="screen-tabiat">
@@ -484,10 +455,6 @@ const SCREENS = [
 const ICONS = {
   weton: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="7" y1="3" x2="7" y2="7"/><line x1="17" y1="3" x2="17" y2="7"/></svg>',
   jodoh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>',
-  betaljemur: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
-  ijab: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
-  tglnikah: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><path d="M8 14l2.5 2.5L16 12"/></svg>',
-  namabayi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10z"/><circle cx="12" cy="11" r="2.3"/></svg>',
   cocok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-6.8-4.1-9-8.1C1.4 9 2.8 5.7 6.1 5.7c1.9 0 3.4 1.1 5.9 3.8 2.5-2.7 4-3.8 5.9-3.8 3.3 0 4.7 3.3 3.1 6.7-2.2 4-9 8.1-9 8.1z"/></svg>',
   manten: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V10a7 7 0 0 1 14 0v11"/><line x1="3" y1="21" x2="21" y2="21"/></svg>',
   usaha: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1-5h14l1 5"/><path d="M4 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M5 9.5V20h14V9.5"/><rect x="10" y="14" width="4" height="6"/></svg>',
@@ -503,10 +470,6 @@ const ICONS = {
 // ing kene supaya bisa melu dibagi kategori/bab bareng SCREENS.
 const EXTRA_CARDS = [
   { id: "jodoh", title: "Jodoh Weton", home: "Kecocokan saka neptu weton loro wong.", category: "jodoh" },
-  { id: "betaljemur", title: "Cocok Nikah Betaljemur", home: "3 rumus pelengkap saka Primbon Betaljemur Adammakna.", category: "jodoh", flagged: true },
-  { id: "ijab", title: "Saat Ijab", home: "Jam apik akad nikah, 3 cara saka Betaljemur Adammakna.", category: "jodoh", flagged: true },
-  { id: "tglnikah", title: "Cek Tanggal Nikah", home: "Priksa pantangan tanggal saka Betaljemur Adammakna.", category: "jodoh", flagged: true },
-  { id: "namabayi", title: "Cocok Jeneng Bayi", home: "Cocog jeneng bayi saka wanda aksara Jawa (Betaljemur No.65).", category: "jodoh", flagged: true },
   { id: "cocok", title: "Cocok Serasi", home: "Kecocokan saka jeneng aksara Arab.", category: "jodoh" },
   { id: "manten", title: "Temu Manten", home: "Petung tanggal nikah + tanggal alternatif.", category: "jodoh" },
   { id: "kawakib", title: "Sa'at Kawakib", home: "Jam planet — warisan falak-nujum klasik.", category: "nujum" },
@@ -646,120 +609,6 @@ function updateJodoh() {
 jodohA.addEventListener("change", updateJodoh);
 jodohB.addEventListener("change", updateJodoh);
 updateJodoh();
-
-// ============ Cocok Nikah Betaljemur ============
-const betaljemurA = document.getElementById("betaljemurA");
-const betaljemurB = document.getElementById("betaljemurB");
-[betaljemurA, betaljemurB].forEach((el) => (el.valueAsDate = new Date()));
-function updateBetaljemur() {
-  const dA = betaljemurA.valueAsDate;
-  const dB = betaljemurB.valueAsDate;
-  const out = document.getElementById("result-betaljemur");
-  if (!dA || !dB) { out.innerHTML = ""; return; }
-  const wA = wetonOf(dA), wB = wetonOf(dB);
-  const c = cocokNikahBetaljemurOf(wA.neptu, wB.neptu);
-  out.innerHTML = `
-    <div class="usulan">◈ BELUM DITASHIH</div>
-    <div class="row"><span class="k">Weton calon suami</span><span class="v">${wA.hari} ${wA.pasaran} (${wA.neptu})</span></div>
-    <div class="row"><span class="k">Weton calon isteri</span><span class="v">${wB.hari} ${wB.pasaran} (${wB.neptu})</span></div>
-    <div class="note" style="margin-top:0.7rem;"><b>No.15 &middot; neptu kapisah, dibagi 9</b><br>
-      Sisa suami ${c.no15.sisaA}, sisa isteri ${c.no15.sisaB} &rarr; <b>${c.no15.arti || "(kombinasi during kacathet)"}</b></div>
-    <div class="note"><b>No.16 &middot; neptu dijumlah, dibagi 4</b><br>
-      ${c.no16.total} &divide; 4, sisa ${c.no16.sisa} &rarr; <b>${c.no16.nama}</b> — ${c.no16.arti}</div>
-    <div class="note"><b>No.23 &middot; neptu dijumlah, dibagi 5</b><br>
-      ${c.no23.total} &divide; 5, sisa ${c.no23.sisa} &rarr; <b>${c.no23.nama}</b> <span style="color:${c.no23.baik ? "var(--good)" : "var(--warn)"}">(${c.no23.baik ? "apik" : "kurang apik"})</span> — ${c.no23.arti}</div>
-    <div class="note" style="margin-top:0.7rem;">Sumber: Kitab Primbon Betaljemur Adammakna (terjemahan Indonesia, KPH Tjakraningrat, digitalisasi Wikimedia Commons — dhata public domain). Dul waos dhewe langsung saka kaca 12-13 lan 17 PDF asli. Telu-telu rumus iki PELENGKAP Jodoh Weton ing ndhuwur (beda sumber, beda rumus), dudu gantine. Isih during ditashih Gus Fi.</div>`;
-}
-betaljemurA.addEventListener("change", updateBetaljemur);
-betaljemurB.addEventListener("change", updateBetaljemur);
-updateBetaljemur();
-
-// ============ Saat Ijab ============
-const ijabTanggal = document.getElementById("ijabTanggal");
-const ijabJam = document.getElementById("ijabJam");
-ijabTanggal.valueAsDate = new Date();
-function updateIjab() {
-  const d = ijabTanggal.valueAsDate;
-  const jamStr = ijabJam.value;
-  const out = document.getElementById("result-ijab");
-  if (!d) { out.innerHTML = ""; return; }
-  const w = wetonOf(d);
-  const r37 = ijab37Of(w.hari);
-  const r35 = jamStr ? ijab35Of(d.getDate(), w.pasaran, jamStr) : null;
-  const r36 = jamStr ? ijab36Of(d.getDate(), jamStr) : null;
-  const labelColor = { apik: "var(--good)", cukupan: "var(--gold)", jelek: "var(--warn)" };
-  out.innerHTML = `
-    <div class="usulan">◈ BELUM DITASHIH</div>
-    <div class="row"><span class="k">Weton rencana nikah</span><span class="v">${w.hari} ${w.pasaran} &middot; tanggal ${d.getDate()}</span></div>
-    <div class="note" style="margin-top:0.7rem;"><b>No.35 &middot; tanggal+pekan, disilangke pasaran</b><br>
-      ${r35 ? `Malaikat: ${r35.malaikat} &middot; Kategori: <b style="color:${labelColor[r35.label]}">${r35.kategori}</b> (${r35.label})` : "Jam durung dilebokake, utawa ing njaba wektu 06.00–17.59 (kitab ora nyakup jam iki)."}</div>
-    <div class="note"><b>No.36 &middot; tanggal+pekan langsung</b><br>
-      ${r36 ? `Malaikat: ${r36.malaikat} ${r36.sifat} &middot; <b style="color:${labelColor[r36.label]}">${r36.label}</b>` : "Jam durung dilebokake, utawa ing njaba wektu 06.00–17.59."}</div>
-    <div class="note"><b>No.37 &middot; miturut dina wae (lintang Suhara)</b><br>
-      Jam apik rina: <b>${r37.siang}</b> &middot; Jam apik wengi: <b>${r37.malam}</b></div>
-    <div class="note" style="margin-top:0.7rem;">Sumber: Kitab Primbon Betaljemur Adammakna kaca 24-25 (No.35/36/37), diwaos langsung dening Dul saka PDF asli. Miturut kitab: kategori "Slamet"=apik, "Rejeki"=cukupan, liyane dianggep jelek (ora dirangking dhewe-dhewe). Telu-telu cara iki katon minangka opsi sing beda ing kitab (dudu diklaim kabeh mesthi setara — during dicek maneh referensi silang nomere). Isih during ditashih Gus Fi.</div>`;
-}
-ijabTanggal.addEventListener("change", updateIjab);
-ijabJam.addEventListener("change", updateIjab);
-ijabJam.addEventListener("input", updateIjab);
-updateIjab();
-
-// ============ Cek Tanggal Nikah ============
-const tglNikahInput = document.getElementById("tglNikahInput");
-tglNikahInput.valueAsDate = new Date();
-function updateTglNikah() {
-  const d = tglNikahInput.valueAsDate;
-  const out = document.getElementById("result-tglnikah");
-  if (!d) { out.innerHTML = ""; return; }
-  const c = cekTanggalNikahOf(d);
-  const adaWarning = c.warnings.length > 0;
-  out.innerHTML = `
-    <div class="usulan">◈ BELUM DITASHIH</div>
-    <div class="row"><span class="k">Weton</span><span class="v">${c.weton.hari} ${c.weton.pasaran}</span></div>
-    <div class="row"><span class="k">Kalender Jawa</span><span class="v">${c.jawa.tanggal} ${c.jawa.bulan} ${c.jawa.tahun} (${c.jawa.windu})</span></div>
-    <div class="big" style="margin-top:0.8rem;color:${adaWarning ? "var(--warn)" : "var(--good)"}">${adaWarning ? `⚠ ${c.warnings.length} pantangan katemu` : "✓ Ora ana pantangan katemu"}</div>
-    ${c.warnings.map((x) => `<div class="note" style="border-left-color:var(--warn);"><b>No.${x.no} &middot; ${x.judul}</b><br>${x.teks}</div>`).join("")}
-    <div class="note" style="margin-top:0.7rem;"><b>No.33 &middot; Katrangan wulan ${c.jawa.bulan}</b><br>${c.bulanKeterangan}</div>
-    <div class="note">${CTN_CATATAN_SELASA_KLIWON}</div>
-    <div class="note" style="margin-top:0.7rem;">Sumber: Kitab Primbon Betaljemur Adammakna kaca 9-13 &amp; 18-21, diwaos langsung dening Dul saka PDF asli. Kalender Jawa (bulan+windu) diitung saka mesin Hijriyah sing wis SOLID (tahun Jawa = tahun Hijriyah + 512, dicek cocog karo ki-demang.com) — during dicek dawa-dawa kanggo mesthekake ora nyimpang saka siklus windu asli. Ora ana pantangan katemu ≠ dijamin apik, mung ora nabrak aturan-aturan ing kene.</div>`;
-}
-tglNikahInput.addEventListener("change", updateTglNikah);
-updateTglNikah();
-
-// ============ Cocok Jeneng Bayi ============
-const namabayiTanggal = document.getElementById("namabayiTanggal");
-const namabayiDisplay = document.getElementById("namabayiDisplay");
-const namabayiKeyboard = document.getElementById("namabayiKeyboard");
-namabayiTanggal.valueAsDate = new Date();
-let namabayiSuku = [];
-HANACARA_URUT.forEach((s) => {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "key";
-  btn.style.fontFamily = "inherit";
-  btn.style.fontSize = "0.85rem";
-  btn.textContent = s;
-  btn.addEventListener("click", () => { namabayiSuku.push(s); updateNamaBayi(); });
-  namabayiKeyboard.appendChild(btn);
-});
-document.getElementById("namabayiBack").addEventListener("click", () => { namabayiSuku.pop(); updateNamaBayi(); });
-document.getElementById("namabayiClear").addEventListener("click", () => { namabayiSuku = []; updateNamaBayi(); });
-function updateNamaBayi() {
-  namabayiDisplay.value = namabayiSuku.join("-");
-  const out = document.getElementById("result-namabayi");
-  const d = namabayiTanggal.valueAsDate;
-  if (!d || namabayiSuku.length === 0) { out.innerHTML = ""; return; }
-  const w = wetonOf(d);
-  const c = cocokNamaBayiOf(w.neptu, namabayiSuku);
-  out.innerHTML = `
-    <div class="row"><span class="k">Weton bayi</span><span class="v">${w.hari} ${w.pasaran} (neptu ${w.neptu})</span></div>
-    <div class="row"><span class="k">Neptu jeneng</span><span class="v">${namabayiSuku.join("-")} = ${c.neptuNama}</span></div>
-    <div class="row"><span class="k">${w.neptu} + ${c.neptuNama}, dibagi 5, sisa</span><span class="v">${c.total} &rarr; ${c.sisa}</span></div>
-    <div class="big" style="margin-top:0.8rem;color:${c.cocok ? "var(--good)" : "var(--warn)"}">${c.cocok ? "✓ Cocog" : "✗ Kurang cocog"}</div>
-    <div class="note" style="margin-top:0.7rem;">Miturut kitab: sisa 0 = jeneng cocog. Kitab Ora menehi katrangan tegese sisa 1-4 sacara spesifik (mung "kurang cocog" sacara umum) — dadi app iki ora ngarang tegese dhewe-dhewe.</div>
-    <div class="note">Tabel neptu 20 wanda direkonstruksi saka 6 titik data sing kecithak ing kitab (rujukan "No.2" kitab dhewe kleru, ora nuduhake tabel aksara) — cocog karo pola hanacaraka baku, nanging during ditashih Gus Fi.</div>`;
-}
-namabayiTanggal.addEventListener("change", updateNamaBayi);
 
 // jinis input sing dijaluk kudu aksara Arab, dudu Latin (padha karo validasi app asli)
 const LATIN_ONLY_RE = /^[a-zA-Z\s]*$/;
@@ -962,9 +811,7 @@ function renderKawakib(lat, lon) {
     <div class="row"><span class="k">Dawa 1 jam (wengi)</span><span class="v">${fmtDur(info.nightHourLenMin)}</span></div>
     <div class="note">Apik/ala miturut tradisi klasik (benefik/malefik), dudu hukum fiqh. Musytari &amp; Zuhrah = apik, Zuhal &amp; Marikh = ala, Syams condong apik, Utarid &amp; Qomar netral.</div>
     ${info.hukum ? `
-    <div class="usulan">◈ BELUM DITASHIH</div>
-    <div class="note"><b>Panganggo jam iki:</b> ${info.hukum}</div>
-    <div class="note">Katrangan iki during dicek Dul langsung saka kitab asli (dijupuk saka rembugan Gus Fi karo ChatGPT sing maca kaca kitab) — urutan planet-e wis SOLID, nanging teks panganggo jam during ditashih.</div>` : ""}`;
+    <div class="note"><b>Panganggo jam iki:</b> ${info.hukum}</div>` : ""}`;
 
   document.getElementById("kawakibTable").innerHTML =
     `<tr><th>Jam</th><th>Wektu</th><th>Planet</th><th>Label</th></tr>` +
@@ -980,14 +827,36 @@ function renderKawakib(lat, lon) {
   if (hukumWrap) {
     hukumWrap.innerHTML = hukumRows.length ? `
       <details style="margin-top:0.7rem;">
-        <summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--gold);">Panganggo 12 jam rina (${table.rulerWeekday}) ◈ during ditashih</summary>
+        <summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--gold);">Panganggo 12 jam rina (${table.rulerWeekday})</summary>
         <div class="note" style="margin-top:0.5rem;">
           ${hukumRows.map((r) => `<div style="margin-bottom:0.5rem;"><b>Jam R${r.hourIndex} &middot; ${r.planet}</b> (${fmtTime(r.start)}–${fmtTime(r.end)}): ${r.hukum}</div>`).join("")}
         </div>
-        <div class="note" style="margin-top:0.4rem;">Sumber: rembugan Gus Fi karo ChatGPT sing maca kaca kitab, during dicek Dul langsung karo kitab asli.</div>
+        <div class="note" style="margin-top:0.4rem;">Sumber: Gus Fi maca lan njarwakake langsung kaca 15-16 kitab asli. Bagean sing ditandhani ⚠️ tegese tulisan ing foto during cetha 100%.</div>
       </details>` : "";
   }
 }
+
+function updateKawakibFilter() {
+  const dayIdx = document.getElementById("kawakibFilterHari").value;
+  const kw = document.getElementById("kawakibFilterKata").value;
+  const wrap = document.getElementById("kawakibFilterResult");
+  if (dayIdx === "" && !kw.trim()) { wrap.innerHTML = ""; return; }
+  const results = kawakibFilter(dayIdx === "" ? null : dayIdx, kw);
+  if (!results.length) {
+    wrap.innerHTML = `<div class="note" style="margin-top:0.5rem;">Ora ana sing cocog karo "${kw}".</div>`;
+    return;
+  }
+  wrap.innerHTML = `
+    <div class="note" style="margin-top:0.3rem;margin-bottom:0.5rem;">${results.length} jam cocog. Golekan iki mung nggoleki tembung ing teks hukum sing ana — dudu kategorisasi resmi saka kitab, dadi bisa uga ana jam liya sing tegese padha nanging tembunge beda.</div>
+    ${results
+      .map(
+        (r) =>
+          `<div class="row" style="align-items:flex-start;padding:0.5rem 0;"><span class="k" style="min-width:6.2rem;">${r.dayName} R${r.jamKe}<br><span style="font-size:0.72rem;color:var(--muted);">${r.planet}</span></span><span class="v" style="text-align:left;font-weight:400;">${r.text}</span></div>`
+      )
+      .join("")}`;
+}
+document.getElementById("kawakibFilterHari").addEventListener("change", updateKawakibFilter);
+document.getElementById("kawakibFilterKata").addEventListener("input", updateKawakibFilter);
 
 function startKawakib(lat, lon) {
   try { localStorage.setItem(KAWAKIB_LOC_KEY, JSON.stringify({ lat, lon })); } catch (e) {}

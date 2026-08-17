@@ -399,37 +399,6 @@ function hijriOf(date) {
   return { hari: HARI_NAMA[date.getDay()], tanggal: h.day, bulan: HIJRI_BULAN[h.month - 1], tahun: h.year };
 }
 
-// ================= KALENDER JAWA (bulan + taun windu) [USULAN — pendekatan] =================
-// Sasi Jawa lan Hijriyah SAMA persis (dina lan sasi-ne, mung jenenge beda —
-// loro-lorone lunar/qomariyah, digandhengake nalika reformasi Sultan Agung 1
-// Sura taun 1555 Jawa = 1 Muharram 1043 H, Jumat Legi 8 Juli 1633 M). Taun
-// Jawa = taun Hijriyah + 512 (dicek cocog: 17 Agustus 2026 miturut
-// ki-demang.com = "3 Mulud 1960" (Jawa) lan "03 Rabiul Awal 1448" (Hijriyah)
-// — 3=3 (dina+sasi padha), 1960-1448=512, pas). Windu (siklus 8 taun,
-// Alip..Jimakir) diitung saka taun Jawa mod 8 (referensi: taun 1 Jawa =
-// Alip). Iki DUDU ngetung ulang siklus windu dhewe (sing miturut riset
-// nduweni pola cuti/wuntu beda sithik saka siklus tabular Hijriyah 30-taun
-// sing wis dienggo ing ndhuwur — during dicek cukup jero apa bakal
-// nyimpang sasuwene pirang-pirang abad), nanging masang jeneng Jawa ing
-// mesin Hijriyah sing wis SOLID — cukup akurat kanggo pakulinan saiki,
-// tetep USULAN amarga during dicocogake dawa-dawa.
-const JAWA_BULAN = [
-  "Sura", "Sapar", "Mulud", "Bakda Mulud", "Jumadilawal", "Jumadilakir",
-  "Rejeb", "Ruwah", "Pasa", "Sawal", "Dulkangidah", "Besar",
-];
-const WINDU = ["Alip", "Ehe", "Jimawal", "Je", "Dal", "Be", "Wawu", "Jimakir"];
-
-function jawaOf(date) {
-  const jdn = gregorianToJDN(date.getFullYear(), date.getMonth() + 1, date.getDate());
-  const h = jdnToHijri(jdn);
-  const tahun = h.year + 512;
-  let r = tahun % 8; if (r === 0) r = 8;
-  return {
-    hari: HARI_NAMA[date.getDay()], tanggal: h.day, bulan: JAWA_BULAN[h.month - 1],
-    bulanIndex: h.month, tahun, windu: WINDU[r - 1],
-  };
-}
-
 // ================= JODOH / COCOK SERASI [SOLID — dijupuk langsung saka app asli] =================
 // Rumus: total = neptuA+neptuB; sisa10 = total%10; yen sisa10<=7 dienggo, yen ora (8/9) dienggo total%7.
 const JODOH_KATEGORI = {
@@ -474,280 +443,6 @@ function cocokSerasiOf(nama1, nama2) {
   let sisa = total % 9;
   if (sisa === 0) sisa = 9;
   return { v1, v2, total, sisa, kategori: COCOK_SERASI_KATEGORI[sisa] };
-}
-
-// ================= COCOK NIKAH BETALJEMUR [USULAN — during ditashih] =================
-// Sumber: Kitab Primbon Betaljemur Adammakna (terjemahan Indonesia, KPH
-// Tjakraningrat, digitalisasi Wikimedia Commons/Pustakatama, public domain).
-// Dul WAOS DHEWE langsung saka kaca 12-13 lan 17 PDF asli (dudu ringkesan
-// pihak katelu) kanggo No.15 lan No.16 — teks isih basa Indonesia asli
-// (dudu diterjemahake, ben paling cedhak karo sumber). No.23 saka riset
-// agent sing uga maca langsung kaca 17, kanthi conto itungan sing dicek
-// bener kanthi matematika. Telu-telune BEDA rumus lan BEDA saka Jodoh Weton
-// (LFNU Jombang, mod-10/7) sing wis ana ing ndhuwur — pelengkap, dudu
-// gantine. Tetep USULAN nganti ditashih Gus Fi, senajan sumbere primer.
-
-// No.15 (kaca 12-13): neptu SAWIJINE wong (dudu dijumlah!) dibagi 9 kapisah
-// kanggo calon suami lan calon isteri, banjur pasangan sisa (1-9, 0->9)
-// dilebokake tabel 45 kombinasi (ora urut, "a lan b" padha karo "b lan a").
-const BETALJEMUR_15_TABEL = {
-  "1-1": "Baik, saling mencintai", "1-2": "Baik", "1-3": "Kuat tetapi rejekinya jauh",
-  "1-4": "Banyak celakanya", "1-5": "Bercerai", "1-6": "Sulit kehidupannya",
-  "1-7": "Banyak musuh", "1-8": "Sengsara", "1-9": "Tempat berlindung",
-  "2-2": "Selamat, rejeki banyak", "2-3": "Salah satu meninggal terlebih dahulu",
-  "2-4": "Banyak mengalami godaan", "2-5": "Banyak celakanya", "2-6": "Cepat menjadi kaya",
-  "2-7": "Banyak anaknya yang mati", "2-8": "Murah rejeki", "2-9": "Banyak rejeki",
-  "3-3": "Melarat", "3-4": "Banyak celakanya", "3-5": "Cepat bercerai",
-  "3-6": "Mendapat anugerah", "3-7": "Banyak celakanya", "3-8": "Salah satu meninggal terlebih dahulu",
-  "3-9": "Banyak rejeki",
-  "4-4": "Sering sakit", "4-5": "Banyak mengalami godaan", "4-6": "Banyak rejeki",
-  "4-7": "Melarat", "4-8": "Mengalami banyak rintangan", "4-9": "Salah satu kalah",
-  "5-5": "Mengalami keberuntungan terus menerus", "5-6": "Murah rejeki",
-  "5-7": "Mata pencahariannya tetap terus ada", "5-8": "Mengalami banyak rintangan", "5-9": "Murah rejeki",
-  "6-6": "Banyak celakanya", "6-7": "Rukun damai/Tenteram", "6-8": "Banyak musuh", "6-9": "Sengsara",
-  "7-7": "Terhukum oleh istrinya", "7-8": "Terhalang karena dirinya sendiri/mendapat celaka dari diri sendiri",
-  "7-9": "Perjodohannya kekal",
-  "8-8": "Dicintai oleh orang lain", "8-9": "Banyak celakanya",
-  "9-9": "Susah rejeki",
-};
-function betaljemur15Of(neptuA, neptuB) {
-  let sA = neptuA % 9; if (sA === 0) sA = 9;
-  let sB = neptuB % 9; if (sB === 0) sB = 9;
-  const key = sA <= sB ? `${sA}-${sB}` : `${sB}-${sA}`;
-  return { sisaA: sA, sisaB: sB, arti: BETALJEMUR_15_TABEL[key] };
-}
-
-// No.16 (kaca 13): neptu suami+isteri DIJUMLAH, dibagi 4.
-const BETALJEMUR_16_KATEGORI = {
-  1: { nama: "Gonto", arti: "Jarang duwe anak." },
-  2: { nama: "Gembili", arti: "Akeh anake." },
-  3: { nama: "Sri", arti: "Akeh rejekine." },
-  4: { nama: "Punggel", arti: "Salah sijine bakal ninggal luwih dhisik." },
-};
-function betaljemur16Of(neptuA, neptuB) {
-  const total = neptuA + neptuB;
-  let sisa = total % 4; if (sisa === 0) sisa = 4;
-  return { total, sisa, ...BETALJEMUR_16_KATEGORI[sisa] };
-}
-
-// No.23 (kaca 17): neptu suami+isteri DIJUMLAH, dibagi 5. "Sing apik tiba ing
-// Sri, Dana, lan Lungguh, kosok baline ing Lara lan Pati."
-const BETALJEMUR_23_KATEGORI = {
-  1: { nama: "Sri", arti: "Slamet, rejekine tansah gilir gumanti.", baik: true },
-  2: { nama: "Dana", arti: "Akeh rejekine.", baik: true },
-  3: { nama: "Lara", arti: "Kangelan/kasusahan.", baik: false },
-  4: { nama: "Pati", arti: "Sengsara, kerep tinemu pati.", baik: false },
-  5: { nama: "Lungguh", arti: "Duwe pangkat/drajat.", baik: true },
-};
-function betaljemur23Of(neptuA, neptuB) {
-  const total = neptuA + neptuB;
-  let sisa = total % 5; if (sisa === 0) sisa = 5;
-  return { total, sisa, ...BETALJEMUR_23_KATEGORI[sisa] };
-}
-
-function cocokNikahBetaljemurOf(neptuA, neptuB) {
-  return {
-    no15: betaljemur15Of(neptuA, neptuB),
-    no16: betaljemur16Of(neptuA, neptuB),
-    no23: betaljemur23Of(neptuA, neptuB),
-  };
-}
-
-// ================= SAAT IJAB — No.35/36/37 [USULAN — during ditashih] =================
-// Sumber: Kitab Primbon Betaljemur Adammakna, kaca 24-25. Dul waos dhewe
-// langsung kaca asli (dicek pindho, resolusi biasa + resolusi dhuwur kanggo
-// mriksa saben sel). Katrangan kitab kanthi tegas nyebutake pirang-pirang
-// cara petung "saat ijab" iku setara/miturut kabiasaan panggonan dhewe-dhewe
-// — MUNG cathetan ing No.37 nyebut nomer sing beda ("No. 32, 33, 34", dudu
-// "No. 35, 36, 37") sing katon kaya bedane penomeran/edisi kitab, dudu salah
-// waca (dicek pindho). Amarga during ditelusuri asale, telu-telune (No.35,
-// 36, 37) ditampilake dhewe-dhewe kanthi sumber cathetan dhewe, DUDU
-// diklaim "miturut kitab telu-telune setara" tanpa dicek maneh.
-const IJAB_JAM_SLOT = [
-  { label: "06.00–08.23", startMin: 6 * 60, endMin: 8 * 60 + 23 },
-  { label: "08.24–10.47", startMin: 8 * 60 + 24, endMin: 10 * 60 + 47 },
-  { label: "10.48–13.11", startMin: 10 * 60 + 48, endMin: 13 * 60 + 11 },
-  { label: "13.12–15.35", startMin: 13 * 60 + 12, endMin: 15 * 60 + 35 },
-  { label: "15.36–17.59", startMin: 15 * 60 + 36, endMin: 17 * 60 + 59 },
-];
-function ijabSlotOf(jamStr) {
-  const [h, m] = jamStr.split(":").map(Number);
-  const mins = h * 60 + m;
-  for (let i = 0; i < 5; i++) {
-    if (mins >= IJAB_JAM_SLOT[i].startMin && mins <= IJAB_JAM_SLOT[i].endMin) return i;
-  }
-  return null; // ing njaba jam 06.00-17.59, kitab ora nyakup wektu iki
-}
-function ijabTanggalGroupOf(tanggal) { return (tanggal - 1) % 5; } // tgl 1/6/11/16/21/26 -> grup 0, dst
-
-// No.35 tabel (a): [grup tanggal][slot jam] -> jeneng malaikat
-const IJAB35_MALAIKAT = [
-  ["Ahmad", "Jibrail", "Ibrahim", "Yusup", "Israil"],
-  ["Jibrail", "Ibrahim", "Yusup", "Israil", "Ahmad"],
-  ["Ibrahim", "Yusup", "Israil", "Ahmad", "Jibrail"],
-  ["Yusup", "Israil", "Ahmad", "Jibrail", "Ibrahim"],
-  ["Israil", "Ahmad", "Jibrail", "Ibrahim", "Yusup"],
-];
-// No.35 tabel (b): [index pasaran, urutan Legi/Pahing/Pon/Wage/Kliwon][slot jam] -> kategori
-const IJAB35_KATEGORI = [
-  ["Pitutur", "Rejeki", "Slamet", "Pangkalan", "Pacakwesi"],
-  ["Rejeki", "Slamet", "Pangkalan", "Pacakwesi", "Pitutur"],
-  ["Slamet", "Pangkalan", "Pacakwesi", "Pitutur", "Rejeki"],
-  ["Pangkalan", "Pacakwesi", "Pitutur", "Rejeki", "Slamet"],
-  ["Pacakwesi", "Pitutur", "Rejeki", "Slamet", "Pangkalan"],
-];
-// Miturut kitab: Slamet=apik, Rejeki=cukupan, liyane (Pitutur/Pangkalan/Pacakwesi)=jelek — ora dirangking dhewe-dhewe.
-const IJAB_KATEGORI_LABEL = { Slamet: "apik", Rejeki: "cukupan" };
-function ijab35Of(tanggal, pasaran, jamStr) {
-  const slot = ijabSlotOf(jamStr);
-  if (slot === null) return null;
-  const group = ijabTanggalGroupOf(tanggal);
-  const pIdx = PASARAN.indexOf(pasaran);
-  const malaikat = IJAB35_MALAIKAT[group][slot];
-  const kategori = IJAB35_KATEGORI[pIdx][slot];
-  return { slotLabel: IJAB_JAM_SLOT[slot].label, malaikat, kategori, label: IJAB_KATEGORI_LABEL[kategori] || "jelek" };
-}
-
-// No.36 tabel: [grup tanggal][slot jam] -> {malaikat, sifat}. Sifat: Tutur/
-// Alangan/Pacak/Slamet/Rejeki (padha karo kategori No.35 nanging jeneng beda).
-const IJAB36_TABEL = [
-  [{ m: "Ahmad", s: "Tutur" }, { m: "Jibrail", s: "Alangan" }, { m: "Ibrahim", s: "Pacak" }, { m: "Yusup", s: "Slamet" }, { m: "Israil", s: "Rejeki" }],
-  [{ m: "Jibrail", s: "Rejeki" }, { m: "Ibrahim", s: "Tutur" }, { m: "Yusup", s: "Alangan" }, { m: "Israil", s: "Pacak" }, { m: "Ahmad", s: "Slamet" }],
-  [{ m: "Ibrahim", s: "Slamet" }, { m: "Yusup", s: "Rejeki" }, { m: "Israil", s: "Tutur" }, { m: "Ahmad", s: "Alangan" }, { m: "Jibrail", s: "Pacak" }],
-  [{ m: "Yusup", s: "Pacak" }, { m: "Israil", s: "Slamet" }, { m: "Ahmad", s: "Rejeki" }, { m: "Jibrail", s: "Tutur" }, { m: "Ibrahim", s: "Alangan" }],
-  [{ m: "Israil", s: "Alangan" }, { m: "Ahmad", s: "Pacak" }, { m: "Jibrail", s: "Slamet" }, { m: "Ibrahim", s: "Rejeki" }, { m: "Yusup", s: "Tutur" }],
-];
-function ijab36Of(tanggal, jamStr) {
-  const slot = ijabSlotOf(jamStr);
-  if (slot === null) return null;
-  const group = ijabTanggalGroupOf(tanggal);
-  const cell = IJAB36_TABEL[group][slot];
-  return { slotLabel: IJAB_JAM_SLOT[slot].label, malaikat: cell.m, sifat: cell.s, label: IJAB_KATEGORI_LABEL[cell.s] || "jelek" };
-}
-
-// No.37: dina wae (dudu neptu/tanggal), lookup langsung jam siang/wengi apik.
-const IJAB37_TABEL = {
-  Minggu: { siang: "07.00–14.00", malam: "24.00" },
-  Senin: { siang: "11.00", malam: "21.00–04.00" },
-  Selasa: { siang: "08.00–15.00", malam: "18.00–01.00" },
-  Rabu: { siang: "12.00", malam: "22.00–05.00" },
-  Kamis: { siang: "09.00–16.00", malam: "19.00–02.00" },
-  Jumat: { siang: "06.00–13.00", malam: "23.00" },
-  Sabtu: { siang: "10.00–18.00", malam: "20.00–03.00" },
-};
-function ijab37Of(hari) { return IJAB37_TABEL[hari]; }
-
-// ================= CEK TANGGAL NIKAH — Betaljemur No.7,8,11-13,26-33 [USULAN] =================
-// Sumber: kaca 9-13 lan 18-21 PDF Betaljemur Adammakna, diwaos langsung
-// (Dul + subagent, dicek pindho resolusi). Mbutuhake jawaOf() (bulan Jawa +
-// windu) ing ndhuwur. Bulan disebut nganggo index 1-12 (Sura=1..Besar=12,
-// padha karo footnote kitab dhewe "angka 1=Sura, 2=Sapar dst"). Sawetara sel
-// sumber katon typo ("Rawuh"~Ruwah, "Raibulakir"~Rabiulakir) — DITANDHANI,
-// dudu dibenerake dhewe. Kabeh during ditashih Gus Fi.
-const CTN_KUNARPAWARSA = { Alip: ["Sabtu", "Pahing"], Ehe: ["Kamis", "Pahing"], Jimawal: ["Senin", "Legi"], Je: ["Jumat", "Legi"], Dal: ["Rabu", "Kliwon"], Be: ["Minggu", "Wage"], Wawu: ["Kamis", "Pon"], Jimakir: ["Selasa", "Pon"] };
-const CTN_SANGARWARSA = { Alip: ["Jumat", "Legi"], Ehe: ["Selasa", "Kliwon"], Jimawal: ["Minggu", "Kliwon"], Je: ["Kamis", "Wage"], Dal: ["Senin", "Pon"], Be: ["Sabtu", "Legi"], Wawu: ["Rabu", "Pahing"], Jimakir: ["Minggu", "Legi"] };
-const CTN_BULAN_WINDU = {
-  Alip: { baik: [1], tidak: [9, 11] }, Ehe: { baik: [1, 2, 6, 7, 8, 10], tidak: [4, 9, 11, 12] },
-  Jimawal: { baik: [7, 8, 10], tidak: [1, 2, 3, 5, 12] }, Je: { baik: [4, 5, 6, 7, 8, 9, 12], tidak: [1, 2, 3, 10, 11] },
-  Dal: { baik: [6, 7, 9, 10], tidak: [2, 3, 8, 11] }, Be: { baik: [6, 12], tidak: [1, 2, 7] },
-  Wawu: { baik: [2, 3, 4, 5, 9], tidak: [1, 10, 11, 12] }, Jimakir: { baik: [3, 5, 7, 8, 10, 12], tidak: [1, 11] },
-};
-const CTN_ANGGARAKASIH = { Alip: [6, 12], Ehe: [7], Jimawal: [1, 8], Je: [2, 8], Dal: [3, 9], Be: [4], Wawu: [4, 11], Jimakir: [5] };
-const CTN_PANTANGAN_BULAN = {
-  Alip: { bulan: [6, 11], akibat: "Lara, kena racun" }, Ehe: { bulan: [3, 9], akibat: "Lara balung" },
-  Jimawal: { bulan: [3, 12], akibat: "Tiwas, keli ing kali" }, Je: { bulan: [1, 10], akibat: "Lara Lepra (kusta)" },
-  Dal: { bulan: [8], akibat: "Lara mriyang/panas", flag: "⚠️ sumber nyithak \"Rawuh\" (mung 1 wulan, beda karo baris liyane sing 2 wulan) — dianggep \"Ruwah\", during ditashih." },
-  Be: { bulan: [2, 7], akibat: "Kena prekara gedhe" }, Wawu: { bulan: [5], akibat: "Lara sirah" },
-  Jimakir: { bulan: [1, 11], akibat: "Lara eling-elingan (pikun)" },
-};
-const CTN_HARI_TIDAK_BAIK = [
-  { bulan: [6, 7, 8], hari: ["Jumat"] }, { bulan: [9, 10, 11], hari: ["Sabtu", "Minggu"] },
-  { bulan: [12, 1, 2], hari: ["Senin", "Selasa"] }, { bulan: [3, 4, 5], hari: ["Rabu", "Kamis"] },
-];
-const CTN_HARI_SANGAR = [
-  { bulan: [9, 10, 11], hari: ["Jumat"] }, { bulan: [12, 1, 2], hari: ["Sabtu", "Minggu"] },
-  { bulan: [3, 4, 5], hari: ["Senin", "Selasa"] }, { bulan: [6, 7, 8], hari: ["Rabu", "Kamis"] },
-];
-const CTN_KEJADIAN_NABI = {
-  1: { tgl: [13], k: "Nabi Ibrahim diobong Raja Namrud" }, 3: { tgl: [3], k: "Nabi Adam diturunake ing donya" },
-  4: { tgl: [16], k: "Nabi Yusuf dilebokake ing sumur" }, 5: { tgl: [5], k: "Nabi Nuh kelem banjir" },
-  9: { tgl: [12, 21], k: "Nabi Musa perang nglawan Raja Fir'aun" }, 11: { tgl: [24], k: "Nabi Yunus dicaplok iwak paus" },
-  12: { tgl: [25], k: "Nabi Muhammad mlebet Gua" },
-};
-const CTN_TANGGAL_NAAS = { 1: [11, 6], 2: [1, 20], 3: [10, 20], 4: [10, 20], 5: [1, 11], 6: [10, 14], 7: [2, 14], 8: [12, 13], 9: [9, 20], 10: [10, 20], 11: [12, 13], 12: [6, 10] };
-const CTN_TANGGAL_SANGAR = { 1: 18, 2: 10, 3: 8, 4: 28, 5: 28, 6: 18, 7: 18, 8: 26, 9: 24, 10: 2, 11: 28 }; // 12 (Besar) blong ing sumber
-const CTN_BANGAS_PADEWAN = { 1: [11], 2: [20], 3: [1, 15], 4: [10, 20], 5: [10, 11], 6: [10, 14], 7: [13, 27], 8: [4, 28], 9: [7, 9, 20], 10: [10], 11: [2, 22], 12: [6, 20] };
-const CTN_TALIWANGKE = [
-  { bulan: [11, 5], hari: "Senin", pasaran: "Kliwon" }, { bulan: [12, 6], hari: "Selasa", pasaran: "Legi" },
-  { bulan: [1, 7], hari: "Rabu", pasaran: "Pahing" }, { bulan: [2, 8], hari: "Kamis", pasaran: "Pon" },
-  { bulan: [3, 9], hari: "Jumat", pasaran: "Wage" },
-  { bulan: [4, 10], hari: "Sabtu", pasaran: "Kliwon", flag: "⚠️ sumber nyithak \"Raibulakir\" (kaselak huruf) kanggo wulan 4 — dianggep Rabiulakir, during ditashih." },
-];
-const CTN_BULAN_BAIK_TIDAK = {
-  1: "Aja dilanggar, amarga yen dilanggar bakal angel lan tansah tukaran.",
-  2: "Kena dilanggar, senajan bakal kurang lan akeh utang.",
-  3: "Aja dilanggar, amarga salah sijine bakal tilar donya.",
-  4: "Kena dilanggar, senajan kerep digunjing lan diece.",
-  5: "Kena dilanggar, senajan kerep ditipu, kelangan, lan akeh mungsuh.",
-  6: "Sugih bandha donya.", 7: "Slamet, sarta akeh anak.", 8: "Slamet lan tansah rukun.",
-  9: "Aja dilanggar, bakal nemoni cilaka gedhe.",
-  10: "Kena dilanggar, senajan kerep kurang lan akeh utang.",
-  11: "Aja dilanggar, bakal kerep lara, kerep tukaran karo kanca.",
-  12: "Sugih, lan nemu kabegjan.",
-};
-const CTN_CATATAN_SELASA_KLIWON = "Miturut kitab: wulan Jumadilakir, Rejeb, Ruwah, lan Besar yen ana dina Selasa Kliwon, apik kanggo hajad nikah — luwih apik maneh yen uga ana Jumat Kliwon. Yen ora ana Selasa Kliwon, wulan-wulan mau kalebu wulan ala. Yen kepeksa, luwih becik ing wulan Sapar, Rabiulawal (Mulud), Jumadilawal, utawa Sawal, angger ana dina Selasa Kliwon lan Jumat Kliwon.";
-
-function cekTanggalNikahOf(date) {
-  const j = jawaOf(date);
-  const w = wetonOf(date);
-  const warnings = [];
-  if (j.bulanIndex === 12 && (j.tanggal === 29 || j.tanggal === 30))
-    warnings.push({ no: "7", judul: "Kunarpawarsa", teks: `Tanggal 29/30 Besar dianggep dina bencana (taun ${j.windu}: ${CTN_KUNARPAWARSA[j.windu].join(" ")}).` });
-  if (j.bulanIndex === 1 && j.tanggal === 3)
-    warnings.push({ no: "8", judul: "Sangarwarsa", teks: `Tanggal 3 Sura dianggep dina sangar (taun ${j.windu}: ${CTN_SANGARWARSA[j.windu].join(" ")}).` });
-  const n11 = CTN_BULAN_WINDU[j.windu];
-  if (n11 && n11.tidak.includes(j.bulanIndex))
-    warnings.push({ no: "11", judul: "Bulan kurang apik", teks: `Wulan ${j.bulan} kurang apik kanggo hajad nikah ing taun ${j.windu}.` });
-  if (CTN_ANGGARAKASIH[j.windu] && CTN_ANGGARAKASIH[j.windu].includes(j.bulanIndex))
-    warnings.push({ no: "12", judul: "Anggarakasih", teks: `Wulan ${j.bulan} ing taun ${j.windu} ora duwe dina Selasa Kliwon — dilarang kanggo hajad nikah.` });
-  const n13 = CTN_PANTANGAN_BULAN[j.windu];
-  if (n13 && n13.bulan.includes(j.bulanIndex))
-    warnings.push({ no: "13", judul: "Pantangan Bulan", teks: `Wulan ${j.bulan} ing taun ${j.windu}: ${n13.akibat}.${n13.flag ? " " + n13.flag : ""}` });
-  CTN_HARI_TIDAK_BAIK.forEach((grp) => { if (grp.bulan.includes(j.bulanIndex) && grp.hari.includes(w.hari)) warnings.push({ no: "26", judul: "Hari kurang apik", teks: `Dina ${w.hari} kurang apik kanggo wulan ${j.bulan}.` }); });
-  CTN_HARI_SANGAR.forEach((grp) => { if (grp.bulan.includes(j.bulanIndex) && grp.hari.includes(w.hari)) warnings.push({ no: "27", judul: "Hari sangar", teks: `Dina ${w.hari} sangar kanggo wulan ${j.bulan}.` }); });
-  const n28 = CTN_KEJADIAN_NABI[j.bulanIndex];
-  if (n28 && n28.tgl.includes(j.tanggal)) warnings.push({ no: "28", judul: "Kejadian Nabi", teks: n28.k });
-  const n29 = CTN_TANGGAL_NAAS[j.bulanIndex];
-  if (n29 && n29.includes(j.tanggal)) warnings.push({ no: "29", judul: "Tanggal Na'as", teks: `Tanggal ${j.tanggal} ${j.bulan} kalebu tanggal na'as.` });
-  if (CTN_TANGGAL_SANGAR[j.bulanIndex] === j.tanggal) warnings.push({ no: "30", judul: "Tanggal sangar", teks: `Tanggal ${j.tanggal} ${j.bulan} kalebu tanggal sangar.` });
-  const n31 = CTN_BANGAS_PADEWAN[j.bulanIndex];
-  if (n31 && n31.includes(j.tanggal)) warnings.push({ no: "31", judul: "Bangas Padewan", teks: `Tanggal ${j.tanggal} ${j.bulan} kalebu dina Bangas.` });
-  CTN_TALIWANGKE.forEach((pair) => { if (pair.bulan.includes(j.bulanIndex) && w.hari === pair.hari && w.pasaran === pair.pasaran) warnings.push({ no: "32", judul: "Taliwangke", teks: `${w.hari} ${w.pasaran} ing wulan ${j.bulan} kalebu Taliwangke.${pair.flag ? " " + pair.flag : ""}` }); });
-  return { jawa: j, weton: w, warnings, bulanKeterangan: CTN_BULAN_BAIK_TIDAK[j.bulanIndex] };
-}
-
-// ================= COCOK JENENG BAYI — Betaljemur No.65 [USULAN — EKSTRA during ditashih] =================
-// Sumber: kaca 42, diwaos langsung dening subagent (2x, dicek pindho).
-// Rumus lan conto itungan VERBATIM saka kitab. NANGING: (1) kitab dhewe
-// rujuk "No.2" kanggo tabel neptu aksara Jawa, jebul No.2 (kaca 7) tabel
-// neptu dina/pasaran/wulan/taun — DUDU tabel aksara. (2) Tabel 20 aksara ing
-// ngisor iki REKONSTRUKSI saka 6 titik data sing pancen kecithak (ha=1,
-// na=2, ca=3, ...nga=20, + conto jeneng sa=8,ka=5,na=2) — cocog persis karo
-// pola urutan hanacaraka baku, nanging 12 aksara tengah DUDU kecithak
-// eksplisit siji-siji. (3) Kitab mung menehi jawaban biner (sisa 0=cocog),
-// TANPA makna kanggo sisa 1-4 — app iki MUNG nampilake apa sing tenan ana
-// ing kitab, ora nyilih kerangka Sri-Lungguh-Gedhong-Lara-Pati saka No.20
-// (kuwi rumus BEDA, kanggo perkara BEDA) tanpa tashih eksplisit Gus Fi.
-const HANACARA_NEPTU = {
-  ha: 1, na: 2, ca: 3, ra: 4, ka: 5, da: 6, ta: 7, sa: 8, wa: 9, la: 10,
-  pa: 11, dha: 12, ja: 13, ya: 14, nya: 15, ma: 16, ga: 17, ba: 18, tha: 19, nga: 20,
-};
-const HANACARA_URUT = ["ha", "na", "ca", "ra", "ka", "da", "ta", "sa", "wa", "la", "pa", "dha", "ja", "ya", "nya", "ma", "ga", "ba", "tha", "nga"];
-function cocokNamaBayiOf(neptuLahir, suku) {
-  const neptuNama = suku.reduce((s, x) => s + (HANACARA_NEPTU[x] || 0), 0);
-  const total = neptuLahir + neptuNama;
-  const sisa = total % 5;
-  return { neptuNama, total, sisa, cocok: sisa === 0 };
 }
 
 // ================= TEMU MANTEN [SOLID — Al-Futuhat Kwagean, dijupuk saka app asli] =================
@@ -1178,123 +873,140 @@ function planetaryHourOf(date, lat, lon) {
   };
 }
 
-// Hukum/kegunaan saben jam rina (jam 1-12) miturut dinten [USULAN — during
-// ditashih, PERLU NGATI-ATI EKSTRA]. Sumbere Gus Fi ngirim kaca kitab
-// menyang ChatGPT, banjur ChatGPT sing nyusun/nerangake dadi tabel iki —
-// Dul DHEWE during tau ndeleng kaca kitab asline, dadi during bisa
-// mbandhingake langsung kaya sing dilakoni kanggo Wuku/Betaljemur (sing
-// dibaca Dul langsung saka PDF asli). Urutan planet-e (CHALDEAN_ORDER,
-// dikonfirmasi cocog karo DAY_RULER_START_INDEX sing wis SOLID) dipercaya,
-// nanging teks "hukum" panganggo saben jam iki durung diverifikasi
-// primer — mangga tashih Gus Fi, utawa yen isih nyimpen kaca kitab asline,
-// apike dicocogake maneh langsung.
+// Hukum/kegunaan saben jam rina (jam 1-12) miturut dinten [SAH — ditashih
+// Gus Fi 17 Agustus 2026]. Sumbere: Gus Fi dhewe maca lan njarwakake
+// langsung kaca 15-16 kitab asli (teks Arab + tegese siji-siji), ngganteni
+// data lawas sing sumbere mung liwat rembugan ChatGPT (durung ditashih,
+// lan sawetara isine kliru/ora ana ing kitab asli — mis. "nganggo busana
+// anyar" ing Ahad jam 1 sing ora ana ing teks Arab). Urutan planet-e
+// (CHALDEAN_ORDER/DAY_RULER_START_INDEX) dicocogake pisan karo tabel iki,
+// kabeh 84 cocog persis — dadi konfirmasi tambahan yen urutan sing wis
+// SOLID kuwi bener. Bagean sing ditandhani ⚠️ tegese tulisan kitab ing
+// foto during cetha 100% — Gus Fi milih ora ngarang, mung menehi konteks.
 const SAAT_KAWAKIB_HUKUM = [
   // 0 Ahad (Minggu)
   [
-    "Apik kanggo mahabbah, qabul, sowan ngarep raja/panguwasa, prekara hukum, lan nganggo busana anyar.",
-    "Jam madzmumah (ala) — ora dianjurake kanggo tumindak wigati.",
-    "Apik kanggo lelungan, tulis-tulis, mahabbah, qabul, lan prekara komunikasi.",
-    "Ora dianjurake kanggo tuku, dagang, lan transaksi.",
-    "Kanggo pisahan, mungsuhan, sengit, lan prekara sing sipate atos.",
+    "Apik kanggo akad wanita (nikah), mahabbah, sowan raja/pangeran/wong agung/hakim, lan prekara sing padha.",
+    "Jam madzmumah (dicela) — aja nindakake apa-apa.",
+    "Apik kanggo lelungan, nulis layang/hujjah, panyuwunan, lan qabul.",
+    "Ora kanggo tuku, adol, utawa prekara pirukunan/persetujuan.",
+    "Kanggo pepisahan, sengit, mungsuhan, lan liya-liyane sing padha.",
     "Apik kanggo nyuwun hajat marang para raja/panguwasa.",
-    "Ora sae kanggo tumindak umum.",
-    "Sae banget, cocog kanggo akeh hajat lan macem-macem urusan.",
-    "Apik kanggo nulis marang wong, narik simpati, mahabbah, lan nyenengake ati.",
-    "Apik kanggo urusan tulisan, dagang/komunikasi lan prekara intelektual.",
-    "Apik kanggo talisman, cincin/jimat lan prekara sing sesambungan karo barang tartamtu.",
-    "Ora dianjurake, kajaba prekara sing sipate negatif/mbebayani.",
+    "Ora dianjurake nindakake apa-apa.",
+    "SAE BANGET — cocog kanggo kabeh prekara, salah sawijining jam sing paling dipuji ing kitab.",
+    "Kanggo nulis marang wong, narik/nyentuh ati, lan liya-liyane sing padha.",
+    "Kanggo nindakake hajat sing dikarepake — jam dipuji (mahmudah).",
+    "Apik kanggo tilasmat, cincin, lan liya-liyane sing padha — dipuji (jayyidah).",
+    "Ora nindakake apa-apa.",
   ],
   // 1 Senin
   [
-    "Mahabbah, narik ati, lan prekara qabul.",
-    "Lelungan lan perjalanan.",
-    "Nulis kitab, layang, lan prekara tulisan.",
-    "Prekara sesambungan karo konflik/lelara lan perkara abot.",
-    "Nyenengake ati/narik simpati lan prekara qabul.",
-    "Prekara perawatan, pangobatan, lan perkara wanita.",
-    "Ngalahake/nalikake lisan, komunikasi lan perkara qabul.",
-    "Nikah lan rukun antarane wong sing beda.",
-    "Pisahan, mungsuhan, sengit.",
-    "Jam sing sae banget, cocog kanggo macem-macem hajat.",
-    "Prekara mungsuhan, perang, lan getih.",
-    "Prekara nalikake, nutup, utawa perkara-perkara tartamtu.",
+    "Mahabbah, ngiket/ngendhaleni lisan, lan narik ati.",
+    "Apik kanggo lelungan dharat lan segara.",
+    "Apik kanggo nikah, nulis/akad kitab, lan surat-menyurat.",
+    "Kanggo prekara-prekara ala/abot: pendarahan, mimisan, lelara, kebinasan, lan liya-liyane.",
+    "Apik kanggo ngrampungake hajat, ngiket lisan, lan narik ati.",
+    "Apik kanggo gawe tilasmat lan liya-liyane.",
+    "Apik kanggo ngrampungake hajat, ngiket lisan, lan narik ati.",
+    "Apik kanggo nikah lan pirukunan antarane wong sing padha sengit.",
+    "Kanggo pepisahan, misahake, sengit, lan liya-liyane.",
+    "SAE BANGET — cocog kanggo kabeh prekara.",
+    "Kanggo mungsuhan, sengit, lan ngucurake getih.",
+    "Apik kanggo ngiket lisan lan prekara narik rasa tresna/simpati.",
   ],
   // 2 Selasa
   [
-    "Prekara sing sipate keras/wani, nanging ora kanggo perkara alus.",
-    "Qabul lan pangestu, mligine tumrap panguwasa.",
-    "Obat/pangobatan, wanita, lan pernikahan.",
-    "Dagang, tuku, adol, lan komunikasi.",
-    "Ora dianjurake kanggo tumindak wigati.",
-    "Nulis prekara lelara, perkara abot, lsp.",
-    "Apik kanggo kabutuhan lan barang sing dikarepake.",
-    "Prekara kekuatan, konflik, lan urusan abot.",
-    "Nikah, mahabbah, lan qabul.",
-    "Ora dianjurake kanggo tumindak.",
-    "Bisa kanggo ngatur lelungan/perjalanan lan prekara komunikasi.",
-    "Apik kanggo prekara mungsuhan, karusakan, pegatan, lan liya-liyane.",
+    "Kanggo sengit, karusakan, pendarahan, lan lelara/penyakit.",
+    "Ora nindakake apa-apa babar pisan.",
+    "Apik kanggo lamaran (khitbah) wanita lan nikah.",
+    "Apik kanggo narik pelanggan, adol, tuku, lan dagang.",
+    "Ora kanggo apa-apa — nahs/ala.",
+    "Kanggo prekara mungsuh, sakit/radhang mripat, lelara, lan liya-liyane.",
+    "Apik kanggo prekara narik rasa tresna lan mahabbah, miturut sing dikarepake.",
+    "Kanggo pendarahan, ngucurake getih, lelara, lan liya-liyane.",
+    "Apik kanggo akad wanita, mahabbah, lan nikah.",
+    "Ora dianjurake — madzmumah.",
+    "Kanggo nyegah lelungan lan ngalangi nikah.",
+    "Kanggo sengit, karusakan, fitnah, kejahatan, talak, lan liya-liyane.",
   ],
   // 3 Rebo (Rabu)
   [
-    "Qabul, tulisan, lan prekara intelektual.",
-    "Ora dianjurake.",
-    "Perkara lelara, tatu, lan prekara abot.",
-    "Apik kanggo hajat umum.",
-    "Prekara mungsuhan, getih, lan perkara keras.",
-    "Hajat, qabul, lan prekara panguwasa.",
-    "Mahabbah lan kualitas/asil sing sae.",
-    "Tulisan, sinau, lan urusan anak.",
-    "Ora sae kanggo pegatan, mungsuhan, lan fitnah.",
-    "Apik kanggo sowan/ngadhep panguwasa lan wong sing duwe kedudukan.",
-    "Apik kanggo qabul, perjanjian, lan rembugan karo panguwasa.",
-    "Prekara mungsuhan lan perkara kasar.",
+    "Apik kanggo qabul lan mahabbah.",
+    "Ora nindakake apa-apa babar pisan — madzmumah.",
+    "Kanggo prekara lelara, pendarahan, lan liya-liyane sing padha.",
+    "SAE BANGET kanggo kabeh amal kabecikan.",
+    "Kanggo prekara-prekara ala.",
+    "Apik kanggo lelungan dharat lan segara.",
+    "Apik kanggo apa wae sing dikarepake — jam apik kanggo amal.",
+    "⚠️ Teks kitab rada samar ing foto — nyebat prekara bocah nangis lan mripat/pandangan; during cetha lengkap.",
+    "Ora kanggo pepisahan, sengit, pendarahan, lan liya-liyane.",
+    "Apik kanggo sowan raja, sultan, lan wong agung.",
+    "Apik kanggo nulis awfaq lan sowan/ketemu hakim utawa panguwasa.",
+    "Kanggo kejahatan lan sengit.",
   ],
   // 4 Kemis (Kamis)
   [
-    "Rejeki, dagang, qabul, lan asil.",
-    "Prekara abot, paukuman, lan perkara sing atos.",
-    "Qabul lan prekara panguwasa, kalebu lelungan tartamtu.",
-    "Mahabbah lan nikah.",
-    "Akad antarane priya-wanita, tulisan, lan komunikasi.",
-    "Lelungan dharat/segara lan macem-macem pakaryan.",
-    "Prekara tartamtu sing sesambungan karo tulisan/ahli tulis.",
-    "Sae kanggo saben pakaryan.",
-    "Kanggo sowan raja/panguwasa.",
-    "Nyuwun hajat marang para pejabat, pangeran, lan wong sing duwe kedudukan.",
-    "Qabul lan mahabbah.",
-    "Ora dianjurake, jam sing ala/madzmumah.",
+    "Apik kanggo narik pelanggan, rejeki, lan qabul.",
+    "⚠️ Ora apik — teks nyambung prekara ukuman lan pendarahan.",
+    "Ora kanggo lelungan; apik kanggo nulis prekara qabul, lamaran, lan narik simpati.",
+    "Apik kanggo mahabbah, nikah, lan liya-liyane.",
+    "Apik kanggo qabul wanita lan lanang, sarta kabeh amal kabecikan sing dikarepake.",
+    "Apik kanggo lelungan dharat lan segara, sarta kabeh amal kabecikan.",
+    "Kanggo sing dikarepake lan prekara qabul para ahli tulis.",
+    "Apik kanggo kabeh amal kabecikan.",
+    "Apik kanggo ketemu raja, sultan, lan panguwasa.",
+    "Apik kanggo nyuwun hajat marang para amir, wong sing duwe jabatan, sultan, lan hakim.",
+    "Apik kanggo nulis prekara qabul lan mahabbah.",
+    "Ora dianjurake babar pisan — madzmumah.",
   ],
   // 5 Jemuwah (Jumat)
   [
-    "Mahabbah, lamaran, lan nikah.",
-    "Talisman/tulisan lan tembung-tembung.",
-    "Ora dianjurake, jam ala.",
-    "Prekara ndhudhuk, sumur, lemah, lan barang-barang ing lemah.",
-    "Qabul, wanita, para raja/panguwasa.",
-    "Prekara sowan panguwasa lan perkara hukum.",
-    "Lamaran lan nikah.",
-    "Prekara kerja lan komunikasi.",
-    "Pisahan lan fitnah — nanging miturut sumber, respone cepet.",
-    "Sumber during cetha kanggo jam iki.",
-    "Sumber during cetha kanggo jam iki.",
-    "Lelungan lan nindakake hajat tartamtu.",
+    "Apik kanggo lamaran lan nikahe wanita.",
+    "Apik kanggo kabeh tilasmat lan sing dikarepake.",
+    "Ora nindakake apa-apa babar pisan — madzmumah lan ala.",
+    "Apik kanggo prekara mripat lan liya-liyane sing padha.",
+    "Apik kanggo nulis prekara qabul kanggo wanita, wong agung, lan liya-liyane.",
+    "Apik kanggo nulis kanggo sowan sultan lan ngrampungake hajat.",
+    "Apik kanggo lamaran lan nikah (padha karo jam 1).",
+    "SAE BANGET — apik kanggo maneka amal, dianggep kaleksanan/sempurna.",
+    "Kanggo pepisahan lan misahake — cepet ijabahe.",
+    "⚠️ Teks kitab rada samar ing foto, during cetha lengkap.",
+    "⚠️ Teks kitab rada samar, nyambung prekara qabul lan maneka hajat.",
+    "Kanggo sing dikarepake.",
   ],
   // 6 Setu (Sabtu)
   [
-    "Qabul lan mahabbah miturut sumber.",
-    "Rukun antarane wong.",
-    "Mungsuhan lan perkara ala.",
-    "Sowan panguwasa/raja lan perkara hukum.",
-    "Prekara mahabbah lan perkara wanita.",
-    "Tulisan lan prekara dagang/pakaryan tartamtu.",
-    "Ora sae, ora dianjurake kanggo pakaryan.",
-    "Lelara, obat, tatu, lan prekara abot.",
-    "Apik kanggo macem-macem tumindak/hajat.",
-    "Prekara perkara keras.",
-    "Qabul nalika sowan raja, menteri, lan para pembesar.",
-    "Kalebu prekara mahabbah/pernikahan.",
+    "SAE BANGET — jam sing dipuji ing dina Setu lan ing wiwitan wulan; apik kanggo qabul, mahabbah, lan sing dikarepake.",
+    "Apik kanggo nulis pirukunan antarane wong.",
+    "Kanggo sengit lan prekara kejahatan.",
+    "Apik kanggo sowan raja lan ngrampungake hajat liwat panguwasa.",
+    "⚠️ Teks kitab nerusake prekara amal Zuhrah, during cetha lengkap ing foto.",
+    "Apik kanggo nulis prekara mburu (mbebedhag).",
+    "Ora ana kabecikane, aja nindakake apa-apa.",
+    "Kanggo lelara, penyakit, lan pendarahan.",
+    "Apik kanggo kabeh amal kabecikan sing dikarepake.",
+    "Kanggo prekara ngombe/nyiram lan maneka lelara.",
+    "Apik kanggo hajat lan ndandani/mendamekake pasangan bojo.",
+    "Apik kanggo qabul nalika sowan raja, wazir/menteri, lan wong agung.",
   ],
 ];
+
+// Golek/filter hukum Sa'at Kawakib miturut dina lan/utawa tembung kunci,
+// tanpa gumantung tanggal/lokasi (mung njupuk saka SAAT_KAWAKIB_HUKUM
+// langsung). dayIdx null/"" = kabeh dina; keyword kosong = kabeh jam.
+function kawakibFilter(dayIdx, keyword) {
+  const kw = (keyword || "").trim().toLowerCase();
+  const days = dayIdx === null || dayIdx === undefined || dayIdx === "" ? [0, 1, 2, 3, 4, 5, 6] : [Number(dayIdx)];
+  const out = [];
+  days.forEach((di) => {
+    SAAT_KAWAKIB_HUKUM[di].forEach((text, i) => {
+      if (!kw || text.toLowerCase().includes(kw)) {
+        out.push({ dayIndex: di, dayName: HARI_NAMA[di], jamKe: i + 1, planet: CHALDEAN_ORDER[(DAY_RULER_START_INDEX[di] + i) % 7], text });
+      }
+    });
+  });
+  return out;
+}
 
 // Tabel lengkap 24 jam kanggo "dina petungan" sing ana ing date (terbit->terbit sabanjure).
 function planetaryHourTable(date, lat, lon) {
