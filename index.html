@@ -167,7 +167,7 @@
 
   .arab{font-family:"Uthman Taha Naskh","Traditional Arabic",serif;}
   .abjad-arabic{
-    font-family:"Uthman Taha Naskh","Traditional Arabic",serif;
+    font-family:"Uthman Taha Naskh","Traditional Arabic",serif !important;
     font-size:2.1rem;text-align:center;min-height:3rem;padding:0.6rem;border:1px dashed var(--rule);
     border-radius:10px;margin-bottom:0.7rem;direction:rtl;background:var(--surface);letter-spacing:0.08em;
     width:100%;outline:none;color:var(--ink);
@@ -302,7 +302,10 @@
       </div>
       <div class="result" id="result-tabiat"></div>
       <div id="abjadHistoryWrap" style="display:none;">
-        <div class="field" style="margin-top:1rem;"><label>Riwayat</label></div>
+        <div class="field" style="margin-top:1rem;display:flex;align-items:center;justify-content:space-between;">
+          <label style="margin:0;">Riwayat</label>
+          <button type="button" id="abjadHistoryClear" style="border:none;background:none;color:var(--muted);font-size:0.8rem;cursor:pointer;text-decoration:underline;padding:0;">🗑 Hapus riwayat</button>
+        </div>
         <div class="result" id="abjadHistory"></div>
       </div>
     </section>
@@ -698,6 +701,7 @@ const abjadKeyboard = document.getElementById("abjadKeyboard");
 const abjadDisplay = document.getElementById("abjadDisplay");
 const abjadHistoryWrap = document.getElementById("abjadHistoryWrap");
 const abjadHistoryEl = document.getElementById("abjadHistory");
+const abjadHistoryClear = document.getElementById("abjadHistoryClear");
 const ABJAD_HISTORY_KEY = "kalamangsa-abjad-history";
 
 HIJAIYAH_URUT.forEach((h) => {
@@ -752,6 +756,11 @@ function renderAbjadHistory() {
     });
   });
 }
+abjadHistoryClear.addEventListener("click", () => {
+  if (!confirm("Busak sedaya riwayat Abjad & Tabiat?")) return;
+  try { localStorage.removeItem(ABJAD_HISTORY_KEY); } catch (e) {}
+  renderAbjadHistory();
+});
 
 let abjadSaveTimer = null;
 function renderAbjad() {
