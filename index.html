@@ -324,6 +324,14 @@ function esc(s) {
   );
 }
 
+// tanggal dina iki miturut jam lokal (dudu UTC) - valueAsDate nganggo UTC dadi tanggal
+// bengi/subuh WIB (00:00-06:59) bisa mundur sedina yen input.valueAsDate langsung diisi new Date()
+function localISODate(d) {
+  d = d || new Date();
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+
 // ============ konfigurasi layar sing pola-e padha (siji tanggal input) ============
 const SCREENS = [
   {
@@ -570,7 +578,7 @@ SCREENS.forEach((s) => {
   main.appendChild(section);
 
   const input = section.querySelector("input");
-  input.valueAsDate = new Date();
+  input.value = localISODate();
   const update = () => {
     const d = input.valueAsDate || new Date();
     document.getElementById("result-" + s.id).innerHTML = s.render(d);
@@ -598,7 +606,7 @@ if (location.hash) goTo(location.hash.replace("#", ""), false);
 // ============ Jodoh ============
 const jodohA = document.getElementById("jodohA");
 const jodohB = document.getElementById("jodohB");
-[jodohA, jodohB].forEach((el) => (el.valueAsDate = new Date()));
+[jodohA, jodohB].forEach((el) => (el.value = localISODate()));
 function updateJodoh() {
   const dA = jodohA.valueAsDate;
   const dB = jodohB.valueAsDate;
